@@ -6,7 +6,7 @@ html, body {
  flex-direction: column;
 }
 body {
-  padding-bottom: 60px; /* atau sesuai tinggi footernya */
+  padding-bottom: 60px; /* Sesuaikan dengan tinggi footer */
  font-family: sans-serif;
  text-align: center;
  color: white;
@@ -83,6 +83,7 @@ h1 {
  0% { opacity: 0.3; transform: scale(0.98); }
  100% { opacity: 1; transform: scale(1); }
 }
+
 h2 {
  margin-top: 20px;
  color: cyan;
@@ -128,15 +129,16 @@ h2 {
 }
 
 /* === FOOTER FIX === */
-footer {
+.fixed-footer {
   position: fixed;
   bottom: 0;
   width: 100%;
-  background-color: #001f3f; /* Ganti sesuai selera */
-  color: white;
+  background-color: #007bff; /* Warna latar footer */
+  color: white;              /* Warna teks */
   text-align: center;
   padding: 10px 0;
-  z-index: 100;
+  z-index: 999;              /* Agar selalu di atas elemen lain */
+  font-weight: bold;
 }
 
 .social-icons a {
@@ -144,5 +146,5 @@ footer {
  margin: 0 10px;
  color: white;
  text-decoration: none;
-                        }
-    
+ }
+ 
