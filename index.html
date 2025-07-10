@@ -14,12 +14,22 @@
    flex-direction: column;
   }
   body {
-   font-family: sans-serif;
-   text-align: center;
-   color: white;
-   background: url('https://files.catbox.moe/8mpen9.png') repeat, url('https://i.ibb.co/W3C6Pfc/galaxy.jpg') center center no-repeat;
-   background-size: cover;
-   background-attachment: fixed;
+    /* Set background gambar full screen */
+    body {
+      margin: 0;
+      height: 100vh;
+      background-image: url('https://files.catbox.moe/8mpen9.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      font-family: Arial, sans-serif;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-shadow: 0 0 5px black;
+    }
   }
   canvas#starfield {
    position: fixed;
@@ -128,10 +138,10 @@
  </style>
 </head>
 <body>
- <audio autoplay loop hidden>
-  <source src="https://files.catbox.moe/ubhpu3.mp3" type="audio/mpeg" />
-  Browser kamu tidak mendukung pemutar musik.
- </audio>
+  <audio autoplay loop>
+    <source src="https://files.catbox.moe/ubhpu3.mp3" type="audio/mpeg" />
+    Browser kamu tidak mendukung audio.
+  </audio>
 
  <canvas id="starfield"></canvas>
 
@@ -261,5 +271,5 @@
   draw();
  </script>
 </body>
-    </html>
+                                                                                                               </html>
  
