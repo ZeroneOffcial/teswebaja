@@ -12,13 +12,10 @@
       height: 100%;
       overflow-x: hidden;
       font-family: Arial, sans-serif;
-    }
-
-      background: radial-gradient(circle at center, #7b2cbf, #5a189a);
-      animation: sparkle 3s infinite;
-      height: 100vh;
-      margin: 0;
-      overflow: hidden;
+      background: url('https://images.unsplash.com/photo-1580422333263-477c2b8ab482?auto=format&fit=crop&w=1920&q=80') repeat;
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center;
     }
 
     canvas#starfield {
@@ -102,24 +99,27 @@
       margin-bottom: 30px;
     }
 
-.box {
-  opacity: 0;
-  max-height: 0;
-  overflow: hidden;
-  transition: all 0.5s ease-in-out;
-}
-.box.show {
-  opacity: 1;
-  max-height: 5000px;
-}
+    .box {
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.5s ease-in-out;
+    }
 
+    .box.show {
+      opacity: 1;
+      max-height: 5000px;
+    }
 
     .product-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 16px;
       padding: 0 20px;
       margin-top: 20px;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .product-item {
@@ -148,12 +148,6 @@
   </style>
 </head>
 <body>
-
-  <!-- Background Video -->
-  <video id="background-video" autoplay loop muted playsinline>
-    <source src="https://files.catbox.moe/yt4f1q.mp4" type="video/mp4" />
-    Browser kamu tidak mendukung video tag.
-  </video>
 
   <!-- Starfield Effect -->
   <canvas id="starfield"></canvas>
@@ -206,37 +200,36 @@
   </div>
 </section>
 
-  <section id="script" class="box">
-    <h2>📥 Script Gratis</h2>
-    <ul>
-      <li><a href="https://www.mediafire.com/file/1qixnnn5qkpfsd4/Alya_Kujou_-_Ai.zip/file" class="btn" target="_blank">📁 Script Alya MD</a></li>
-      <li><a href="https://www.mediafire.com/file/j8wdz9rigc8acd2/ASUNA_BY_YOIMIYA.zip/file" class="btn" target="_blank">📁 Script Asuna MD</a></li>
-      <li><a href="https://www.mediafire.com/file/y9pxpqkl5z7t996/%25E1%25B4%2580%25E1%25B4%258B%25E1%25B4%2580%25E1%25B4%258D%25E1%25B4%2587_%25E1%25B4%258D%25E1%25B4%2585_%25E1%25B4%25A01.4.zip/file" class="btn" target="_blank">📁 Script Akame MD</a></li>
-      <li><a href="https://www.mediafire.com/file/nuhk0tv5xanpsh0/Base_Cataly_Simple_Bot_V1_%25282%2529.zip/file" class="btn" target="_blank">📁 Script Pushkontak Cataly</a></li>
-      <li><a href="https://www.mediafire.com/file/xvozeb7b1s5ijk6/SC_NINE_ASSISTANT.zip/file" class="btn" target="_blank">📁 Script Nine Assistant</a></li>
-    </ul>
-  </section>
-  <section id="group" class="box">
-    <h2>👥 Join Group Kami</h2>
-    <ul>
-      <li><a href="https://chat.whatsapp.com/FKh6jAsdPhUD9t06pXcw3u" class="btn" target="_blank">👥 LINK GROUP BOT V1</a></li>
-      <li><a href="https://chat.whatsapp.com/EeeJowLDBaSA9WtSWinYpY?mode=ac_t" class="btn" target="_blank">👥 LINK GROUP BOT V2</a></li>
-      <li><a href="https://chat.whatsapp.com/Eo62y4vuqrVHYwLlGf5IPY" class="btn" target="_blank">👥 GROUP SALES PROMOTIONS</a></li>
-      <li><a href="https://whatsapp.com/channel/0029Vb2yK5VLCoX4w8rbQZ2I" class="btn" target="_blank">📣 CHANNEL WHATSAPP</a></li>
-    </ul>
-  </section>
+<section id="script" class="box">
+  <h2>📥 Script Gratis</h2>
+  <ul>
+    <li><a href="https://www.mediafire.com/file/1qixnnn5qkpfsd4/Alya_Kujou_-_Ai.zip/file" class="btn" target="_blank">📁 Script Alya MD</a></li>
+    <li><a href="https://www.mediafire.com/file/j8wdz9rigc8acd2/ASUNA_BY_YOIMIYA.zip/file" class="btn" target="_blank">📁 Script Asuna MD</a></li>
+    <li><a href="https://www.mediafire.com/file/y9pxpqkl5z7t996/%25E1%25B4%2580%25E1%25B4%258B%25E1%25B4%2580%25E1%25B4%258D%25E1%25B4%2587_%25E1%25B4%258D%25E1%25B4%2585_%25E1%25B4%25A01.4.zip/file" class="btn" target="_blank">📁 Script Akame MD</a></li>
+    <li><a href="https://www.mediafire.com/file/nuhk0tv5xanpsh0/Base_Cataly_Simple_Bot_V1_%25282%2529.zip/file" class="btn" target="_blank">📁 Script Pushkontak Cataly</a></li>
+    <li><a href="https://www.mediafire.com/file/xvozeb7b1s5ijk6/SC_NINE_ASSISTANT.zip/file" class="btn" target="_blank">📁 Script Nine Assistant</a></li>
+  </ul>
+</section>
 
-  <!-- Footer -->
-  <footer>
-    <p>© 2025 - 2026 Zerone Official</p>
-    <div class="social-icons">
-      <a href="https://www.youtube.com/@ZeroOffc" target="_blank"><i class="fab fa-youtube"></i></a>
-      <a href="https://t.me/ZeroneOfficial" target="_blank"><i class="fab fa-telegram"></i></a>
-      <a href="https://wa.me/6283840390064" target="_blank"><i class="fab fa-whatsapp"></i></a>
-    </div>
-  </footer>
+<section id="group" class="box">
+  <h2>👥 Join Group Kami</h2>
+  <ul>
+    <li><a href="https://chat.whatsapp.com/FKh6jAsdPhUD9t06pXcw3u" class="btn" target="_blank">👥 LINK GROUP BOT V1</a></li>
+    <li><a href="https://chat.whatsapp.com/EeeJowLDBaSA9WtSWinYpY?mode=ac_t" class="btn" target="_blank">👥 LINK GROUP BOT V2</a></li>
+    <li><a href="https://chat.whatsapp.com/Eo62y4vuqrVHYwLlGf5IPY" class="btn" target="_blank">👥 GROUP SALES PROMOTIONS</a></li>
+    <li><a href="https://whatsapp.com/channel/0029Vb2yK5VLCoX4w8rbQZ2I" class="btn" target="_blank">📣 CHANNEL WHATSAPP</a></li>
+  </ul>
+</section>
 
-  <!-- Starfield Script -->
+<footer>
+  <p>© 2025 - 2026 Zerone Official</p>
+  <div class="social-icons">
+    <a href="https://www.youtube.com/@ZeroOffc" target="_blank"><i class="fab fa-youtube"></i></a>
+    <a href="https://t.me/ZeroneOfficial" target="_blank"><i class="fab fa-telegram"></i></a>
+    <a href="https://wa.me/6283840390064" target="_blank"><i class="fab fa-whatsapp"></i></a>
+  </div>
+</footer>
+
 <script>
   function togglePanel(type) {
     const publik = document.getElementById('panel-publik');
@@ -251,46 +244,46 @@
     }
   }
 
-    const c = document.getElementById("starfield"),
-          ctx = c.getContext("2d"),
-          stars = [];
+  const c = document.getElementById("starfield"),
+        ctx = c.getContext("2d"),
+        stars = [];
 
-    function resize() {
-      c.width = innerWidth;
-      c.height = innerHeight;
-    }
+  function resize() {
+    c.width = innerWidth;
+    c.height = innerHeight;
+  }
 
-    window.addEventListener("resize", resize);
-    resize();
+  window.addEventListener("resize", resize);
+  resize();
 
-    for (let i = 0; i < 150; i++) {
-      stars.push({
-        x: Math.random() * c.width,
-        y: Math.random() * c.height,
-        r: Math.random() * 1.5 + 0.5,
-        dx: (Math.random() - 0.5) * 0.5,
-        dy: (Math.random() - 0.5) * 0.5
-      });
-    }
+  for (let i = 0; i < 150; i++) {
+    stars.push({
+      x: Math.random() * c.width,
+      y: Math.random() * c.height,
+      r: Math.random() * 1.5 + 0.5,
+      dx: (Math.random() - 0.5) * 0.5,
+      dy: (Math.random() - 0.5) * 0.5
+    });
+  }
 
-    function draw() {
-      ctx.clearRect(0, 0, c.width, c.height);
-      ctx.fillStyle = "white";
-      stars.forEach(s => {
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, 2 * Math.PI);
-        ctx.fill();
-        s.x += s.dx;
-        s.y += s.dy;
-        if (s.x < 0 || s.x > c.width) s.dx *= -1;
-        if (s.y < 0 || s.y > c.height) s.dy *= -1;
-      });
-      requestAnimationFrame(draw);
-    }
+  function draw() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.fillStyle = "white";
+    stars.forEach(s => {
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, 2 * Math.PI);
+      ctx.fill();
+      s.x += s.dx;
+      s.y += s.dy;
+      if (s.x < 0 || s.x > c.width) s.dx *= -1;
+      if (s.y < 0 || s.y > c.height) s.dy *= -1;
+    });
+    requestAnimationFrame(draw);
+  }
 
-    draw();
-  </script>
+  draw();
+</script>
+
 </body>
   </html>
-
   
