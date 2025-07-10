@@ -20,13 +20,26 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: radial-gradient(circle at center, #7b2cbf, #5a189a);
-      animation: sparkle 3s infinite;
+      background: linear-gradient(270deg, #7b2cbf, #9d4edd, #5a189a);
+      background-size: 600% 600%;
+      animation: sparkle 10s ease infinite;
       z-index: -1;
     }
     @keyframes sparkle {
-      0%, 100% { background-color: #7b2cbf; }
-      50% { background-color: #9d4edd; }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.8s ease forwards;
+    }
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     .main-container {
       position: relative;
@@ -80,6 +93,11 @@
       color: white;
       margin-bottom: 10px;
       display: inline-block;
+      transition: 0.3s;
+    }
+    .social-icons a:hover {
+      transform: scale(1.3);
+      color: #00ffff;
     }
     .btn {
       display: inline-block;
@@ -92,6 +110,12 @@
       color: black;
       font-weight: bold;
       cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn:hover {
+      background: #00ffff;
+      transform: scale(1.05);
+      box-shadow: 0 0 10px #00ffff;
     }
     .product-grid {
       display: flex;
@@ -118,7 +142,7 @@
   </style>
 </head>
 <body>
-  <div class="main-container">
+  <div class="main-container fade-in">
     <h1>Selamat datang di Zerone Official</h1>
 
     <!-- Panel Produk -->
@@ -168,11 +192,11 @@
     <section id="group" class="box">
       <h2>👥 Join Group Kami</h2>
       <ul>
-      <li><a href="https://chat.whatsapp.com/FKh6jAsdPhUD9t06pXcw3u" class="btn" target="_blank">👥 LINK GROUP BOT V1</a></li>
-      <li><a href="https://chat.whatsapp.com/EeeJowLDBaSA9WtSWinYpY?mode=ac_t" class="btn" target="_blank">👥 LINK GROUP BOT V2</a></li>
-      <li><a href="https://chat.whatsapp.com/Eo62y4vuqrVHYwLlGf5IPY" class="btn" target="_blank">👥 GROUP SALES PROMOTIONS</a></li>
-      <li><a href="https://whatsapp.com/channel/0029Vb2yK5VLCoX4w8rbQZ2I" class="btn" target="_blank">📣 CHANNEL WHATSAPP</a></li>
-    </ul>
+        <li><a href="https://chat.whatsapp.com/FKh6jAsdPhUD9t06pXcw3u" class="btn" target="_blank">👥 LINK GROUP BOT V1</a></li>
+        <li><a href="https://chat.whatsapp.com/EeeJowLDBaSA9WtSWinYpY?mode=ac_t" class="btn" target="_blank">👥 LINK GROUP BOT V2</a></li>
+        <li><a href="https://chat.whatsapp.com/Eo62y4vuqrVHYwLlGf5IPY" class="btn" target="_blank">👥 GROUP SALES PROMOTIONS</a></li>
+        <li><a href="https://whatsapp.com/channel/0029Vb2yK5VLCoX4w8rbQZ2I" class="btn" target="_blank">📣 CHANNEL WHATSAPP</a></li>
+      </ul>
     </section>
 
     <!-- Auto Forum -->
@@ -186,39 +210,31 @@
     </section>
   </div>
 
-  <!-- Foto Profil -->
   <img src="https://files.catbox.moe/8es5ms.jpeg" class="logo" alt="Foto Profil Zerone" />
-
-  <!-- Ucapan Terima Kasih -->
   <div class="thank-you">Terima kasih sudah order di website Zerone Official</div>
-
-  <!-- Footer -->
   <footer><p>© 2025 Zerone Official. All rights reserved.</p></footer>
-
-  <!-- Icon Sosial -->
   <div class="social-icons">
-      <a href="https://www.youtube.com/@ZeroOffc" target="_blank"><i class="fab fa-youtube"></i></a>
-      <a href="https://t.me/ZeroneOfficial" target="_blank"><i class="fab fa-telegram"></i></a>
-      <a href="https://wa.me/6283840390064" target="_blank"><i class="fab fa-whatsapp"></i></a>
+    <a href="https://www.youtube.com/@ZeroOffc" target="_blank"><i class="fab fa-youtube"></i></a>
+    <a href="https://t.me/ZeroneOfficial" target="_blank"><i class="fab fa-telegram"></i></a>
+    <a href="https://wa.me/6283840390064" target="_blank"><i class="fab fa-whatsapp"></i></a>
   </div>
 
-  <!-- Script Panel & Forum -->
   <script>
     function togglePanel(panelType) {
-      document.getElementById("panel-publik").style.display = panelType === 'publik' ? 'flex' : 'none';
-      document.getElementById("panel-privat").style.display = panelType === 'privat' ? 'flex' : 'none';
+      document.getElementById(\"panel-publik\").style.display = panelType === 'publik' ? 'flex' : 'none';
+      document.getElementById(\"panel-privat\").style.display = panelType === 'privat' ? 'flex' : 'none';
     }
-    window.addEventListener("DOMContentLoaded", () => {
-      togglePanel("publik");
+    window.addEventListener(\"DOMContentLoaded\", () => {
+      togglePanel(\"publik\");
     });
-
     function generateForum() {
-      const produk = document.getElementById("input-produk").value;
-      const harga = document.getElementById("input-harga").value;
-      const tanggal = document.getElementById("input-tanggal").value;
-      const format = `[ *DETAIL PESANAN* ]\n\n• PRODUK : ${produk}\n• HARGA : ${harga}\n• TANGGAL : ${tanggal}\n\n[ *SELAMAT BERBELANJA* ]`;
-      document.getElementById("output-forum").value = format;
+      const produk = document.getElementById(\"input-produk\").value;
+      const harga = document.getElementById(\"input-harga\").value;
+      const tanggal = document.getElementById(\"input-tanggal\").value;
+      const format = `[ *DETAIL PESANAN* ]\\n\\n• PRODUK : ${produk}\\n• HARGA : ${harga}\\n• TANGGAL : ${tanggal}\\n\\n[ *SELAMAT BERBELANJA* ]`;
+      document.getElementById(\"output-forum\").value = format;
     }
   </script>
 </body>
-</html>
+                                                                                                    </html>
+                                                      
