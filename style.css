@@ -6,9 +6,21 @@ html, body {
  flex-direction: column;
 }
 body {
-  padding-bottom: 60px;
-  /* background-image: none; */ /* opsional, bisa dihapus saja */
-  background: transparent;
+  background: radial-gradient(circle at center, #7b2cbf, #5a189a);
+  animation: sparkle 3s infinite;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Efek kelap-kelip */
+@keyframes sparkle {
+  0%, 100% {
+    background-color: #7b2cbf;
+  }
+  50% {
+    background-color: #9d4edd;
+  }
 }
 
 canvas#starfield {
