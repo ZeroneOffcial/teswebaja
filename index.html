@@ -4,237 +4,121 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zerone Official</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      height: 100%;
-      overflow: hidden;
       font-family: Arial, sans-serif;
+      background: radial-gradient(circle at center, #7b2cbf, #5a189a);
+      color: white;
     }
-    body::before {
-      content: "";
+
+    canvas#starfield {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(270deg, #7b2cbf, #9d4edd, #5a189a);
-      background-size: 600% 600%;
-      animation: sparkle 10s ease infinite;
       z-index: -1;
     }
-    @keyframes sparkle {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+
+    .marquee {
+      background: rgba(0, 0, 0, 0.5);
+      color: cyan;
+      padding: 10px 0;
+      font-weight: bold;
+      font-size: 16px;
+      white-space: nowrap;
+      overflow: hidden;
     }
-    .fade-in {
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeInUp 0.8s ease forwards;
+
+    .marquee span {
+      display: inline-block;
+      animation: marquee 15s linear infinite;
     }
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+
+    @keyframes marquee {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
     }
-    .main-container {
-      position: relative;
-      z-index: 1;
-      overflow-y: auto;
-      height: 100vh;
+
+    .produk-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
       padding: 20px;
-      padding-bottom: 160px;
     }
-    .logo {
-      width: 100px;
-      border-radius: 50%;
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      box-shadow: 0 0 10px cyan;
-      z-index: 10;
-    }
-    .thank-you {
-      position: fixed;
-      bottom: 80px;
-      right: 20px;
-      background: rgba(0,0,0,0.5);
-      color: white;
-      padding: 10px 15px;
+
+    .produk-card {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
       border-radius: 10px;
-      z-index: 10;
-      font-size: 14px;
+      text-align: center;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
+
+    .produk-card a {
+      display: block;
+      margin-top: 10px;
+      background: cyan;
+      color: black;
+      padding: 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .terimakasih {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 16px;
+      background: rgba(0,0,0,0.3);
+      padding: 10px;
+    }
+
     footer {
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0,0,0,0.7);
       color: white;
       text-align: center;
       padding: 10px 0;
-      z-index: 10;
-    }
-    .social-icons {
-      position: fixed;
-      bottom: 50%;
-      left: 10px;
-      transform: translateY(50%);
-      z-index: 10;
-      font-size: 20px;
-      color: white;
-    }
-    .social-icons a {
-      color: white;
-      margin-bottom: 10px;
-      display: inline-block;
-      transition: 0.3s;
-    }
-    .social-icons a:hover {
-      transform: scale(1.3);
-      color: #00ffff;
-    }
-    .btn {
-      display: inline-block;
-      background: cyan;
-      padding: 10px 15px;
-      margin: 5px 0;
-      border: none;
-      border-radius: 6px;
-      text-decoration: none;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .btn:hover {
-      background: #00ffff;
-      transform: scale(1.05);
-      box-shadow: 0 0 10px #00ffff;
-    }
-    .product-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .product-item {
-      background: rgba(255,255,255,0.9);
-      padding: 10px;
-      border-radius: 8px;
-      width: calc(50% - 10px);
-    }
-    section.box {
-      margin-bottom: 30px;
-    }
-    .input {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 5px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
       font-size: 14px;
+      z-index: 999;
     }
   </style>
 </head>
 <body>
-  <div class="main-container fade-in">
-    <h1>Selamat datang di Zerone Official</h1>
 
-    <!-- Panel Produk -->
-    <section id="panel" class="box show">
-      <h2>📦 Daftar Panel Paket</h2>
-      <div class="button-group">
-        <button class="btn" onclick="togglePanel('publik')">Panel Publik</button>
-        <button class="btn" onclick="togglePanel('privat')">Panel Privat</button>
-      </div>
+  <canvas id="starfield"></canvas>
 
-      <!-- Panel Publik -->
-      <div id="panel-publik" class="product-grid box">
-        <div class="product-item">📦 4GB: Rp4.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-        <div class="product-item">📦 5GB: Rp5.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-        <div class="product-item">📦 6GB: Rp6.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-        <div class="product-item">📦 7GB: Rp7.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-        <div class="product-item">📦 8GB: Rp8.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-        <div class="product-item">📦 9GB: Rp9.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-        <div class="product-item">📦 UNLI: Rp10.000<br><a href="https://wa.me/6283840390064" class="btn">Order via WhatsApp</a></div>
-      </div>
+  <div class="marquee"><span>Selamat datang di Zerone Official! Order sekarang juga via WhatsApp 💜</span></div>
 
-      <!-- Panel Privat -->
-      <div id="panel-privat" class="product-grid box">
-        <div class="product-item">📦 4GB: Rp5.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-        <div class="product-item">📦 5GB: Rp6.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-        <div class="product-item">📦 6GB: Rp7.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-        <div class="product-item">📦 7GB: Rp8.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-        <div class="product-item">📦 8GB: Rp9.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-        <div class="product-item">📦 9GB: Rp10.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-        <div class="product-item">📦 UNLI: Rp11.000<br><a href="https://wa.me/6283840390064" class="btn">Order via WhatsApp</a></div>
-      </div>
-    </section>
-
-    <!-- Script Gratis -->
-    <section id="script" class="box">
-      <h2>📥 Script Gratis</h2>
-      <ul>
-        <li><a href="https://www.mediafire.com/file/1qixnnn5qkpfsd4/Alya_Kujou_-_Ai.zip/file" class="btn">📁 Script Alya MD</a></li>
-        <li><a href="https://www.mediafire.com/file/j8wdz9rigc8acd2/ASUNA_BY_YOIMIYA.zip/file" class="btn">📁 Script Asuna MD</a></li>
-        <li><a href="https://www.mediafire.com/file/y9pxpqkl5z7t996/%25E1%25B4%2580%25E1%25B4%258B%25E1%25B4%2580%25E1%25B4%258D%25E1%25B4%2587_%25E1%25B4%258D%25E1%25B4%2585_%25E1%25B4%25A01.4.zip/file" class="btn">📁 Script Akame MD</a></li>
-        <li><a href="https://www.mediafire.com/file/nuhk0tv5xanpsh0/Base_Cataly_Simple_Bot_V1_%25282%2529.zip/file" class="btn">📁 Script Pushkontak Cataly</a></li>
-        <li><a href="https://www.mediafire.com/file/xvozeb7b1s5ijk6/SC_NINE_ASSISTANT.zip/file" class="btn">📁 Script Nine Assistant</a></li>
-      </ul>
-    </section>
-
-    <!-- Join Group -->
-    <section id="group" class="box">
-      <h2>👥 Join Group Kami</h2>
-      <ul>
-        <li><a href="https://chat.whatsapp.com/FKh6jAsdPhUD9t06pXcw3u" class="btn" target="_blank">👥 LINK GROUP BOT V1</a></li>
-        <li><a href="https://chat.whatsapp.com/EeeJowLDBaSA9WtSWinYpY?mode=ac_t" class="btn" target="_blank">👥 LINK GROUP BOT V2</a></li>
-        <li><a href="https://chat.whatsapp.com/Eo62y4vuqrVHYwLlGf5IPY" class="btn" target="_blank">👥 GROUP SALES PROMOTIONS</a></li>
-        <li><a href="https://whatsapp.com/channel/0029Vb2yK5VLCoX4w8rbQZ2I" class="btn" target="_blank">📣 CHANNEL WHATSAPP</a></li>
-      </ul>
-    </section>
-
-    <!-- Auto Forum -->
-    <section class="box" id="autoforum">
-      <h2>📝 Auto Forum Pesanan</h2>
-      <label>Produk:<br><input type="text" id="input-produk" class="input" /></label><br>
-      <label>Harga:<br><input type="text" id="input-harga" class="input" /></label><br>
-      <label>Tanggal:<br><input type="date" id="input-tanggal" class="input" /></label><br><br>
-      <button class="btn" onclick="generateForum()">🔁 Buat Pesan</button>
-      <textarea id="output-forum" rows="6" class="input" style="width:100%;margin-top:10px;"></textarea>
-    </section>
+  <div class="produk-container">
+    <div class="produk-card">
+      <h3>Panel 4GB</h3>
+      <p>Rp4.000</p>
+      <a href="https://wa.me/6283840390064?text=%5B%20*DETAIL%20PESANAN*%20%5D%0A%0A•%20PRODUK%20:%20Panel%204GB%0A•%20HARGA%20:%20Rp4.000%0A•%20TANGGAL%20:%2010%20Juli%202025%0A%0A%5B%20*SELAMAT%20BERBELANJA*%20%5D" target="_blank">Order via WhatsApp</a>
+    </div>
+    <!-- Tambahkan produk berikutnya di sini -->
+    <div class="produk-card">
+      <h3>Panel 5GB</h3>
+      <p>Rp5.000</p>
+      <a href="https://wa.me/6283840390064?text=%5B%20*DETAIL%20PESANAN*%20%5D%0A%0A•%20PRODUK%20:%20Panel%205GB%0A•%20HARGA%20:%20Rp5.000%0A•%20TANGGAL%20:%2010%20Juli%202025%0A%0A%5B%20*SELAMAT%20BERBELANJA*%20%5D" target="_blank">Order via WhatsApp</a>
+    </div>
+    <!-- Lanjutkan sampai 15GB kalau mau -->
   </div>
 
-  <img src="https://files.catbox.moe/8es5ms.jpeg" class="logo" alt="Foto Profil Zerone" />
-  <div class="thank-you">Terima kasih sudah order di website Zerone Official</div>
-  <footer><p>© 2025 Zerone Official. All rights reserved.</p></footer>
-  <div class="social-icons">
-    <a href="https://www.youtube.com/@ZeroOffc" target="_blank"><i class="fab fa-youtube"></i></a>
-    <a href="https://t.me/ZeroneOfficial" target="_blank"><i class="fab fa-telegram"></i></a>
-    <a href="https://wa.me/6283840390064" target="_blank"><i class="fab fa-whatsapp"></i></a>
+  <div class="terimakasih">
+    Terima kasih sudah order di website <strong>Zerone Official</strong>
   </div>
 
-  <script>
-    function togglePanel(panelType) {
-      document.getElementById(\"panel-publik\").style.display = panelType === 'publik' ? 'flex' : 'none';
-      document.getElementById(\"panel-privat\").style.display = panelType === 'privat' ? 'flex' : 'none';
-    }
-    window.addEventListener(\"DOMContentLoaded\", () => {
-      togglePanel(\"publik\");
-    });
-    function generateForum() {
-      const produk = document.getElementById(\"input-produk\").value;
-      const harga = document.getElementById(\"input-harga\").value;
-      const tanggal = document.getElementById(\"input-tanggal\").value;
-      const format = `[ *DETAIL PESANAN* ]\\n\\n• PRODUK : ${produk}\\n• HARGA : ${harga}\\n• TANGGAL : ${tanggal}\\n\\n[ *SELAMAT BERBELANJA* ]`;
-      document.getElementById(\"output-forum\").value = format;
-    }
-  </script>
+  <footer>
+    &copy; 2025 Zerone Official. All rights reserved.
+  </footer>
+
 </body>
-                                                                                                    </html>
-                                                      
+</html>
