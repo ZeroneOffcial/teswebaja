@@ -6,29 +6,29 @@
  <title>Zerone Official</title>
  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
  <style>
-  html, body {
-   margin: 0;
-   padding: 0;
-   min-height: 100vh;
-   display: flex;
-   flex-direction: column;
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
   }
   body {
-    /* Set background gambar full screen */
-    body {
-      margin: 0;
-      height: 100vh;
-      background-image: url('https://files.catbox.moe/8mpen9.png');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      font-family: Arial, sans-serif;
+    #background-video {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      z-index: -1; /* Supaya video di belakang konten */
+      object-fit: cover; /* supaya video menyesuaikan ukuran layar */
+    }
+    .content {
+      position: relative;
+      z-index: 1;
       color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      text-shadow: 0 0 5px black;
+      text-align: center;
+      padding: 20px;
+      font-family: Arial, sans-serif;
     }
   }
   canvas#starfield {
@@ -139,10 +139,10 @@
 </head>
 <body>
 
-<audio autoplay loop muted id="background-audio">
-  <source src="https://files.catbox.moe/ubhpu3.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
+  <video id="background-video" autoplay loop muted>
+    <source src="https://files.catbox.moe/yt4f1q.mp4" type="video/mp4" />
+    Browser kamu tidak mendukung video tag.
+  </video>
 
 
  <canvas id="starfield"></canvas>
@@ -273,5 +273,5 @@
   draw();
  </script>
 </body>
- </html>
- 
+    </html>
+                                                                                                                    
