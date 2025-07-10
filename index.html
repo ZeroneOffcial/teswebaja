@@ -2,58 +2,49 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zerone Official</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      height: 100%;
-      overflow-x: hidden;
-      font-family: Arial, sans-serif;
-      background: url('https://images.unsplash.com/photo-1580422333263-477c2b8ab482?auto=format&fit=crop&w=1920&q=80') repeat;
-      background-attachment: fixed;
-      background-size: cover;
-      background-position: center;
-      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      color: white;
+      background: url('https://i.ibb.co/b5k5Lw5/galaxy-parallax.gif') repeat, url('https://i.ibb.co/W3C6Pfc/galaxy.jpg') center center no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+    }
     canvas#starfield {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
       z-index: -1;
     }
-
     .marquee {
       background: rgba(0, 0, 0, 0.5);
       color: cyan;
       padding: 10px 0;
       font-weight: bold;
       font-size: 16px;
-      white-space: nowrap;
       overflow: hidden;
+      white-space: nowrap;
     }
-
     .marquee span {
       display: inline-block;
       padding-left: 100%;
       animation: scroll-left 15s linear infinite;
     }
-
     @keyframes scroll-left {
       0% { transform: translateX(0); }
       100% { transform: translateX(-100%); }
     }
-
-    header {
-      text-align: center;
-      padding: 20px;
-    }
-
     .logo {
       width: 100px;
       border-radius: 50%;
@@ -61,26 +52,9 @@
       display: block;
       box-shadow: 0 0 10px cyan;
     }
-
-    h1 {
-      animation: fadeInText 3s ease-in-out infinite alternate;
-      margin-bottom: 0;
-    }
-
-    @keyframes fadeInText {
-      0% { opacity: 0.3; transform: scale(0.98); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    h2 {
-      color: cyan;
-      margin-top: 20px;
-      margin-bottom: 10px;
-    }
-
     .btn {
       display: inline-block;
-      margin: 10px 5px;
+      margin: 10px;
       padding: 10px 20px;
       background-color: rgba(255, 255, 255, 0.15);
       color: white;
@@ -89,126 +63,117 @@
       box-shadow: 0 0 10px cyan;
       cursor: pointer;
       backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border: 1px solid rgba(255, 255, 255, 0.2);
       transition: background 0.3s ease;
-      font-weight: 600;
     }
-
     .btn:hover {
       background-color: rgba(255, 255, 255, 0.25);
     }
-
     .button-group {
       margin-bottom: 30px;
-      text-align: center;
     }
-
     .box {
-      max-width: 1000px;
-      margin: 0 auto 40px auto;
-      padding: 0 20px;
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.5s ease-in-out;
     }
-
+    .box.show {
+      opacity: 1;
+      max-height: 5000px;
+    }
+    h1 {
+      animation: fadeInText 3s ease-in-out infinite alternate;
+    }
+    @keyframes fadeInText {
+      0% { opacity: 0.3; transform: scale(0.98); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    h2 {
+      margin-top: 20px;
+      color: cyan;
+    }
     .product-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
       gap: 16px;
+      padding: 0 20px;
+      margin-top: 20px;
     }
-
     .product-item {
       background-color: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 10px;
       padding: 15px;
       backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
       box-shadow: 0 0 8px cyan;
       color: white;
-      text-align: center;
-      font-weight: 600;
     }
-
+    .product-item .btn {
+      margin-top: 10px;
+    }
     footer {
       padding: 20px;
       background-color: rgba(0, 0, 0, 0.4);
-      text-align: center;
+      margin-top: auto;
     }
-
     .social-icons a {
       font-size: 24px;
       margin: 0 10px;
       color: white;
       text-decoration: none;
-      transition: color 0.3s ease;
     }
-
-    .social-icons a:hover {
-      color: cyan;
-    }
-
-    /* Hide all panels initially except publik */
-    #panel-publik {
-      display: grid;
-    }
-
-    #panel-privat {
-      display: none;
-    }
-
   </style>
 </head>
 <body>
-
-  <!-- Starfield Effect -->
+  <audio autoplay loop hidden>
+    <source src="https://www.bensound.com/bensound-music/bensound-dreams.mp3" type="audio/mpeg" />
+    Browser kamu tidak mendukung pemutar musik.
+  </audio>
   <canvas id="starfield"></canvas>
-
-  <!-- Marquee -->
-  <div class="marquee">
-    <span>✨ Terima kasih telah order di website Zerone Official ✨</span>
-  </div>
-
-  <!-- Header -->
+  <div class="marquee"><span>✨ Terima kasih telah order di website Zerone Official ✨</span></div>
   <header>
     <img src="https://files.catbox.moe/8es5ms.jpeg" alt="Logo" class="logo" />
     <h1>Selamat Datang Di Website</h1>
     <h2>Zerone Official</h2>
     <div class="button-group">
-      <a href="#panel" class="btn">Daftar Produk</a>
+      <a href="#produk" class="btn">Daftar Produk</a>
       <a href="#script" class="btn">Download Script Free</a>
       <a href="#group" class="btn">Join Group Kami</a>
     </div>
   </header>
 
-  <section id="panel" class="box">
-    <h2>📦 Daftar Panel Paket</h2>
-
-    <div class="button-group">
-      <button class="btn" onclick="togglePanel('publik')">Panel Publik</button>
-      <button class="btn" onclick="togglePanel('privat')">Panel Privat</button>
+  <section id="produk" class="box">
+    <h2>📦 Daftar Produk Panel</h2>
+    <div class="product-grid">
+      <div class="product-item">📦 Reseller Panel: Rp5.000<br><a href="#" class="btn wa-order" data-produk="Reseller Panel" data-harga="Rp5.000">Order via WhatsApp</a></div>
+      <div class="product-item">📦 Admin Panel: Rp7.000<br><a href="#" class="btn wa-order" data-produk="Admin Panel" data-harga="Rp7.000">Order via WhatsApp</a></div>
+      <div class="product-item">📦 PT Panel: Rp15.000<br><a href="#" class="btn wa-order" data-produk="PT Panel" data-harga="Rp15.000">Order via WhatsApp</a></div>
     </div>
-
-    <!-- Panel Publik -->
-    <div id="panel-publik" class="product-grid">
-      <div class="product-item">📦 4GB: Rp4.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-      <div class="product-item">📦 5GB: Rp5.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-      <div class="product-item">📦 6GB: Rp6.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-      <div class="product-item">📦 7GB: Rp7.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-      <div class="product-item">📦 8GB: Rp8.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-      <div class="product-item">📦 9GB: Rp9.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-      <div class="product-item">📦 UNLI: Rp10.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
+    <h2>📡 Paket Publik</h2>
+    <div class="product-grid">
+      <div class="product-item">📦 4GB: Rp4.000<br><a href="#" class="btn wa-order" data-produk="Publik 4GB" data-harga="Rp4.000">Order via WhatsApp</a></div>
+      <div class="product-item">📦 5GB: Rp5.000<br><a href="#" class="btn wa-order" data-produk="Publik 5GB" data-harga="Rp5.000">Order via WhatsApp</a></div>
+      <div class="product-item">📦 6GB: Rp6.000<br><a href="#" class="btn wa-order" data-produk="Publik 6GB" data-harga="Rp6.000">Order via WhatsApp</a></div>
+      <div class="product-item">📦 7GB: Rp7.000<br><a href="#" class="btn wa-order" data-produk="Publik 7GB" data-harga="Rp7.000">Order via WhatsApp</a></div>
+      <div class="product-item">📦 8GB: Rp8.000<br><a href="#" class="btn wa-order" data-produk="Publik 8GB" data-harga="Rp8.000">Order via WhatsApp</a></div>
+      <div class="product-item">📦 9GB: Rp9.000<br><a href="#" class="btn wa-order" data-produk="Publik 9GB" data-harga="Rp9.000">Order via WhatsApp</a></div>
+      <div class="product-item">📦 UNLI: Rp10.000<br><a href="#" class="btn wa-order" data-produk="Publik UNLI" data-harga="Rp10.000">Order via WhatsApp</a></div>
     </div>
-
-    <!-- Panel Privat -->
-    <div id="panel-privat" class="product-grid">
-      <div class="product-item">📦 4GB: Rp5.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-      <div class="product-item">📦 5GB: Rp6.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-      <div class="product-item">📦 6GB: Rp7.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-      <div class="product-item">📦 7GB: Rp8.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-      <div class="product-item">📦 8GB: Rp9.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-      <div class="product-item">📦 9GB: Rp10.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
-      <div class="product-item">📦 UNLI: Rp11.000<br><a href="#" class="btn">Order via WhatsApp</a></div>
+    <h2>📡 Paket Private</h2>
+    <div class="product-grid">
+      <div class="product-item">📦 4GB: Rp5.000<br><a href="#" class="btn wa-order" data-produk="Private 4GB" data-harga="Rp5.000">Order via WhatsApp</a></div>
+      <div class="product-item">📦 5GB: Rp6.000<br><a href="#" class="btn wa-order" data-produk="Private 5GB" data-harga="Rp6.000">Order via WhatsApp</a></div>
+      <div class="product-item">📦 6GB: Rp7.000<br><a href="#" class="btn wa-order" data-produk="Private 6GB" data-harga="Rp7.000">Order via WhatsApp</a></div>
+      <div class="product-item">📦 7GB: Rp8.000<br><a href="#" class="btn wa-order" data-produk="Private 7GB" data-harga="Rp8.000">Order via WhatsApp</a></div>
+      <div class="product-item">📦 8GB: Rp9.000<br><a href="#" class="btn wa-order" data-produk="Private 8GB" data-harga="Rp9.000">Order via WhatsApp</a></div>
+      <div class="product-item">📦 9GB: Rp10.000<br><a href="#" class="btn wa-order" data-produk="Private 9GB" data-harga="Rp10.000">Order via WhatsApp</a></div>
+      <div class="product-item">📦 UNLI: Rp11.000<br><a href="#" class="btn wa-order" data-produk="Private UNLI" data-harga="Rp11.000">Order via WhatsApp</a></div>
     </div>
   </section>
-
+  <!-- Script & Group sections tetap seperti sebelumnya -->
   <section id="script" class="box">
     <h2>📥 Script Gratis</h2>
     <ul>
@@ -219,7 +184,6 @@
       <li><a href="https://www.mediafire.com/file/xvozeb7b1s5ijk6/SC_NINE_ASSISTANT.zip/file" class="btn" target="_blank">📁 Script Nine Assistant</a></li>
     </ul>
   </section>
-
   <section id="group" class="box">
     <h2>👥 Join Group Kami</h2>
     <ul>
@@ -238,61 +202,43 @@
       <a href="https://wa.me/6283840390064" target="_blank"><i class="fab fa-whatsapp"></i></a>
     </div>
   </footer>
-
   <script>
-    function togglePanel(type) {
-      const publik = document.getElementById('panel-publik');
-      const privat = document.getElementById('panel-privat');
-
-      if (type === 'publik') {
-        publik.style.display = 'grid';
-        privat.style.display = 'none';
-      } else {
-        privat.style.display = 'grid';
-        publik.style.display = 'none';
-      }
-    }
-
-    const c = document.getElementById("starfield"),
-          ctx = c.getContext("2d"),
-          stars = [];
-
-    function resize() {
-      c.width = window.innerWidth;
-      c.height = window.innerHeight;
-    }
-
-    window.addEventListener("resize", resize);
-    resize();
-
-    for (let i = 0; i < 150; i++) {
-      stars.push({
-        x: Math.random() * c.width,
-        y: Math.random() * c.height,
-        r: Math.random() * 1.5 + 0.5,
-        dx: (Math.random() - 0.5) * 0.5,
-        dy: (Math.random() - 0.5) * 0.5
+    document.querySelectorAll(".wa-order").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        const p = btn.getAttribute("data-produk");
+        const h = btn.getAttribute("data-harga");
+        const t = new Date().toLocaleDateString("id-ID");
+        window.open(`https://wa.me/6283840390064?text=${encodeURIComponent(`[ *DETAIL PESANAN* ]\n\n• PRODUK : ${p}\n• HARGA : ${h}\n• TANGGAL : ${t}\n\n[ *SELAMAT BERBELANJA* ]`)}`, "_blank");
       });
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, c.width, c.height);
-      ctx.fillStyle = "white";
-      stars.forEach(s => {
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, 2 * Math.PI);
-        ctx.fill();
-        s.x += s.dx;
-        s.y += s.dy;
-        if (s.x < 0 || s.x > c.width) s.dx *= -1;
-        if (s.y < 0 || s.y > c.height) s.dy *= -1;
+    });
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const id = btn.getAttribute('href');
+        if (id && id.startsWith("#")) {
+          e.preventDefault();
+          document.querySelectorAll('.box').forEach(x => x.classList.remove('show'));
+          const tar = document.querySelector(id);
+          if (tar) tar.classList.add('show');
+        }
       });
-      requestAnimationFrame(draw);
+    });
+    const c = document.getElementById("starfield"), ctx = c.getContext("2d"), stars = [];
+    function rz(){c.width=innerWidth; c.height=innerHeight;}
+    window.addEventListener("resize", rz); rz();
+    for(let i=0;i<150;i++){stars.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.5+0.5,dx:(Math.random()-0.5)*0.5,dy:(Math.random()-0.5)*0.5});}
+    function dr(){
+      ctx.clearRect(0,0,c.width,c.height);
+      ctx.fillStyle="white"; stars.forEach(s=>{
+        ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,2*Math.PI); ctx.fill();
+        s.x+=s.dx; s.y+=s.dy;
+        if(s.x<0||s.x>c.width) s.dx*=-1;
+        if(s.y<0||s.y>c.height) s.dy*=-1;
+      });
+      requestAnimationFrame(dr);
     }
-
-    draw();
+    dr();
   </script>
-
 </body>
-                                                                                                   </html>
-            
+                                                    </html>
+                                                                                                                                                   
