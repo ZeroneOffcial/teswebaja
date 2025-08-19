@@ -1,271 +1,353 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
- <title>Zerone Official</title>
-
- <!-- ✅ Tambahan biar link preview ada gambar/PP-nya -->
- <meta property="og:title" content="Zerone Official">
- <meta property="og:description" content="Website Resmi Zerone Market - Produk Panel, Bot Gratis, dan Layanan Terbaik!">
- <meta property="og:image" content="https://files.catbox.moe/bmdr7y.jpg">
- <meta property="og:url" content="https://zeronemarket.vercel.app">
- <meta property="og:type" content="website">
-
- <meta name="twitter:card" content="summary_large_image">
- <meta name="twitter:title" content="Zerone Official">
- <meta name="twitter:description" content="Website Resmi Zerone Store - Produk Panel, Bot Gratis, dan Layanan Terbaik!">
- <meta name="twitter:image" content="https://files.catbox.moe/bmdr7y.jpg">
-  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vinzz Store — QRIS via Avola API (Template)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="color-scheme" content="light dark">
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      color: white;
-      background: url('https://files.catbox.moe/8mpen9.png') center center no-repeat;
-      background-size: cover;
-      background-attachment: fixed;
-    }
-    canvas#starfield {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: -1;
-    }
-    .marquee {
-      background: rgba(0, 0, 0, 0.5);
-      color: cyan;
-      padding: 10px 0;
-      font-weight: bold;
-      font-size: 16px;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-    .marquee span {
-      display: inline-block;
-      padding-left: 100%;
-      animation: scroll-left 15s linear infinite;
-    }
-    @keyframes scroll-left {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
-    }
-    .logo {
-      width: 100px;
-      border-radius: 50%;
-      margin: 20px auto;
-      display: block;
-      box-shadow: 0 0 10px cyan;
-    }
-    .btn {
-      display: inline-block;
-      margin: 10px;
-      padding: 10px 20px;
-      background-color: rgba(255, 255, 255, 0.15);
-      color: white;
-      text-decoration: none;
-      border-radius: 10px;
-      box-shadow: 0 0 10px cyan;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      transition: background 0.3s ease;
-    }
-    .btn:hover {
-      background-color: rgba(255, 255, 255, 0.25);
-    }
-    .button-group {
-      margin-bottom: 30px;
-    }
-    .box {
-      opacity: 0;
-      max-height: 0;
-      overflow: hidden;
-      transition: all 0.5s ease-in-out;
-    }
-    .box.show {
-      opacity: 1;
-      max-height: 5000px;
-    }
-    h1 {
-      animation: fadeInText 3s ease-in-out infinite alternate;
-    }
-    @keyframes fadeInText {
-      0% { opacity: 0.3; transform: scale(0.98); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-    h2 {
-      margin-top: 20px;
-      color: cyan;
-    }
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 16px;
-      padding: 0 20px;
-      margin-top: 20px;
-    }
-    .product-item {
-      background-color: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 10px;
-      padding: 15px;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      box-shadow: 0 0 8px cyan;
-      color: white;
-    }
-    .product-item .btn {
-      margin-top: 10px;
-    }
-    footer {
-      padding: 20px;
-      background-color: rgba(0, 0, 0, 0.4);
-      margin-top: auto;
-    }
-    .social-icons a {
-      font-size: 24px;
-      margin: 0 10px;
-      color: white;
-      text-decoration: none;
-    }
+    .glass{backdrop-filter: blur(10px); background: color-mix(in oklab, white 72%, transparent)}
+    .dark .glass{background: color-mix(in oklab, #0b1220 60%, transparent)}
+    .shimmer{background: linear-gradient(100deg,rgba(255,255,255,0) 40%,rgba(255,255,255,.25) 50%,rgba(255,255,255,0) 60%) no-repeat; background-size:200% 100%; animation: shimmer 1.25s infinite}
+    @keyframes shimmer{to{background-position:-200% 0}}
   </style>
+  <!--
+  =====================================================================
+  TEMPLATE FRONTEND HTML UNTUK QRIS via AVOLA API (orkut.avola.id)
+  =====================================================================
+  ⚠️ Penting:
+  - API Avola memerlukan OTP→TOKEN. JANGAN taruh username/password di frontend.
+  - Siapkan backend SEDERHANA (Node/PHP) yang mengekspos:
+      GET  /api/avola/gettoken              -> { token }
+      POST /api/avola/createpayment         -> { invoice_id, qr_image_url, pay_url?, expires_at? }
+      GET  /api/avola/mutasiqr              -> { status: 'PENDING'|'PAID'|'EXPIRED', paid_at? }
+    Backend ini yang memanggil endpoint asli orkut.avola.id dengan kredensialmu.
+  - File ini mendukung 2 mode: SANDBOX (simulasi) & LIVE (panggil backend kamu).
+  -->
 </head>
-<body>
-  <audio autoplay loop hidden>
-    <source src="https://files.catbox.moe/ubhpu3.mp3" type="audio/mpeg" />
-    Browser kamu tidak mendukung pemutar musik.
-  </audio>
-  <canvas id="starfield"></canvas>
-  <div class="marquee"><span>✨ Terima kasih telah order di website Zerone Official ✨</span></div>
-
-  <header>
-    <img src="https://files.catbox.moe/8es5ms.jpeg" alt="Logo" class="logo" />
-    <h1>Selamat Datang Di Website</h1>
-    <h2>Zerone Official</h2>
-    <div class="button-group">
-      <a href="#produk" class="btn">Daftar Produk</a>
-      <a href="#script" class="btn">Download Script Free</a>
-      <a href="#group" class="btn">Join Group Kami</a>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen">
+  <header class="sticky top-0 z-30 bg-white/80 dark:bg-slate-900/70 backdrop-blur border-b border-slate-200/50 dark:border-slate-800/60">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-500"></div>
+        <h1 class="text-lg font-semibold">Vinzz Store</h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="toggle-dark" class="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 text-sm">🌗 Tema</button>
+        <select id="mode" class="px-3 py-1.5 rounded-xl text-slate-900">
+          <option value="sandbox">Sandbox</option>
+          <option value="live">Live</option>
+        </select>
+      </div>
     </div>
   </header>
 
-  <!-- Produk -->
-  <section id="produk" class="box">
-    <h2>📦 Daftar Produk Panel</h2>
-    <div class="product-grid">
-      <div class="product-item">📦 Reseller Panel: Rp5.000<br><a href="#" class="btn wa-order" data-produk="Reseller Panel" data-harga="Rp5.000">Order via WhatsApp</a></div>
-      <div class="product-item">📦 Admin Panel: Rp7.000<br><a href="#" class="btn wa-order" data-produk="Admin Panel" data-harga="Rp7.000">Order via WhatsApp</a></div>
-      <div class="product-item">📦 PT Panel: Rp15.000<br><a href="#" class="btn wa-order" data-produk="PT Panel" data-harga="Rp15.000">Order via WhatsApp</a></div>
-    </div>
-    <h2>📡 Paket Publik</h2>
-    <div class="product-grid">
-      <div class="product-item">📦 4GB: Rp4.000<br><a href="#" class="btn wa-order" data-produk="Publik 4GB" data-harga="Rp4.000">Order via WhatsApp</a></div>
-      <div class="product-item">📦 5GB: Rp5.000<br><a href="#" class="btn wa-order" data-produk="Publik 5GB" data-harga="Rp5.000">Order via WhatsApp</a></div>
-      <div class="product-item">📦 6GB: Rp6.000<br><a href="#" class="btn wa-order" data-produk="Publik 6GB" data-harga="Rp6.000">Order via WhatsApp</a></div>
-      <div class="product-item">📦 7GB: Rp7.000<br><a href="#" class="btn wa-order" data-produk="Publik 7GB" data-harga="Rp7.000">Order via WhatsApp</a></div>
-      <div class="product-item">📦 8GB: Rp8.000<br><a href="#" class="btn wa-order" data-produk="Publik 8GB" data-harga="Rp8.000">Order via WhatsApp</a></div>
-      <div class="product-item">📦 9GB: Rp9.000<br><a href="#" class="btn wa-order" data-produk="Publik 9GB" data-harga="Rp9.000">Order via WhatsApp</a></div>
-      <div class="product-item">📦 UNLI: Rp10.000<br><a href="#" class="btn wa-order" data-produk="Publik UNLI" data-harga="Rp10.000">Order via WhatsApp</a></div>
-    </div>
-    <h2>📡 Paket Private</h2>
-    <div class="product-grid">
-      <div class="product-item">📦 4GB: Rp5.000<br><a href="#" class="btn wa-order" data-produk="Private 4GB" data-harga="Rp5.000">Order via WhatsApp</a></div>
-      <div class="product-item">📦 5GB: Rp6.000<br><a href="#" class="btn wa-order" data-produk="Private 5GB" data-harga="Rp6.000">Order via WhatsApp</a></div>
-      <div class="product-item">📦 6GB: Rp7.000<br><a href="#" class="btn wa-order" data-produk="Private 6GB" data-harga="Rp7.000">Order via WhatsApp</a></div>
-      <div class="product-item">📦 7GB: Rp8.000<br><a href="#" class="btn wa-order" data-produk="Private 7GB" data-harga="Rp8.000">Order via WhatsApp</a></div>
-      <div class="product-item">📦 8GB: Rp9.000<br><a href="#" class="btn wa-order" data-produk="Private 8GB" data-harga="Rp9.000">Order via WhatsApp</a></div>
-      <div class="product-item">📦 9GB: Rp10.000<br><a href="#" class="btn wa-order" data-produk="Private 9GB" data-harga="Rp10.000">Order via WhatsApp</a></div>
-      <div class="product-item">📦 UNLI: Rp11.000<br><a href="#" class="btn wa-order" data-produk="Private UNLI" data-harga="Rp11.000">Order via WhatsApp</a></div>
-    </div>
-  </section>
+  <main class="max-w-6xl mx-auto p-4">
+    <section class="rounded-3xl p-6 mb-6 bg-gradient-to-br from-indigo-500 to-cyan-500 text-white shadow">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold">Checkout QRIS instan (Avola)</h2>
+          <p class="opacity-90 mt-1">Template satu file: produk + modal QR + auto cek mutasi.</p>
+        </div>
+        <div class="text-sm opacity-90">Mode transaksi: <span id="mode-label" class="font-semibold">Sandbox</span></div>
+      </div>
+    </section>
 
-  <!-- Script -->
-  <section id="script" class="box">
-    <h2>📥 Script Gratis</h2>
-    <ul>
-      <li><a href="https://www.mediafire.com/file/1qixnnn5qkpfsd4/Alya_Kujou_-_Ai.zip/file" class="btn" target="_blank">📁 Script Alya MD</a></li>
-      <li><a href="https://www.mediafire.com/file/j8wdz9rigc8acd2/ASUNA_BY_YOIMIYA.zip/file" class="btn" target="_blank">📁 Script Asuna MD</a></li>
-      <li><a href="https://www.mediafire.com/file/y9pxpqkl5z7t996/%25E1%25B4%2580%25E1%25B4%258B%25E1%25B4%2580%25E1%25B4%258D%25E1%25B4%2587_%25E1%25B4%258D%25E1%25B4%2585_%25E1%25B4%25A01.4.zip/file" class="btn" target="_blank">📁 Script Akame MD</a></li>
-      <li><a href="https://www.mediafire.com/file/nuhk0tv5xanpsh0/Base_Cataly_Simple_Bot_V1_%25282%2529.zip/file" class="btn" target="_blank">📁 Script Pushkontak Cataly</a></li>
-      <li><a href="https://www.mediafire.com/file/xvozeb7b1s5ijk6/SC_NINE_ASSISTANT.zip/file" class="btn" target="_blank">📁 Script Nine Assistant</a></li>
-      <li><a href="https://www.mediafire.com/file/tganablas4ir8qm/Sc+Landing+Page.zip/file" class="btn" target="_blank">📁 Script Landing Page</a></li>
-    </ul>
-  </section>
+    <section>
+      <h3 class="text-xl font-semibold mb-3">Produk</h3>
+      <div id="products" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
 
-  <!-- Group -->
-  <section id="group" class="box">
-    <h2>👥 Join Group Kami</h2>
-    <ul>
-      <li><a href="https://chat.whatsapp.com/FKh6jAsdPhUD9t06pXcw3u" class="btn" target="_blank">👥 LINK GROUP BOT V1</a></li>
-      <li><a href="https://chat.whatsapp.com/EeeJowLDBaSA9WtSWinYpY?mode=ac_t" class="btn" target="_blank">👥 LINK GROUP BOT V2</a></li>
-      <li><a href="https://chat.whatsapp.com/Eo62y4vuqrVHYwLlGf5IPY" class="btn" target="_blank">👥 GROUP SALES PROMOTIONS</a></li>
-      <li><a href="https://whatsapp.com/channel/0029Vb2yK5VLCoX4w8rbQZ2I" class="btn" target="_blank">📣 CHANNEL WHATSAPP</a></li>
-  </section>
+    <section class="mt-8">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-lg font-semibold">Riwayat Order (Local)</h3>
+        <button id="clear-history" class="text-sm underline">Bersihkan</button>
+      </div>
+      <div id="history" class="space-y-2"></div>
+    </section>
+  </main>
 
-  <footer>
-    <p>© 2025 - 2026 Zerone Official</p>
-    <div class="social-icons">
-      <a href="https://www.youtube.com/@ZeroOffc" target="_blank"><i class="fab fa-youtube"></i></a>
-      <a href="https://t.me/ZeroneOfficial" target="_blank"><i class="fab fa-telegram"></i></a>
-      <a href="https://wa.me/6283840390064" target="_blank"><i class="fab fa-whatsapp"></i></a>
+  <!-- Modal Pembayaran -->
+  <div id="pay-modal" class="fixed inset-0 hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60" onclick="closeModal()"></div>
+    <div class="relative w-full max-w-lg rounded-3xl glass border border-white/20 dark:border-slate-800 shadow-xl">
+      <div class="p-5 flex items-start gap-3 border-b border-white/20 dark:border-slate-800">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-500"></div>
+        <div>
+          <div class="text-lg font-semibold">Bayar via QRIS</div>
+          <div id="modal-sub" class="text-xs opacity-70">Menyiapkan invoice…</div>
+        </div>
+        <button onclick="closeModal()" class="ml-auto px-2 py-1 rounded-lg hover:bg-white/10">✕</button>
+      </div>
+      <div class="p-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex flex-col items-center justify-center border rounded-2xl p-3">
+            <img id="qr-image" alt="QRIS" class="w-52 h-52 object-contain shimmer rounded-xl" />
+            <a id="pay-url" href="#" target="_blank" class="mt-2 text-xs underline">Buka halaman pembayaran</a>
+          </div>
+          <div class="space-y-3">
+            <div class="text-sm">Invoice ID: <span id="invoice-id" class="font-mono">—</span></div>
+            <div class="text-sm">Jumlah: <span id="invoice-amount" class="font-semibold">—</span></div>
+            <div class="text-sm">Status: <span id="invoice-status" class="px-2 py-1 rounded-lg bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300">MENUNGGU</span></div>
+            <div class="text-sm">Expired: <span id="invoice-expired">—</span> <span id="countdown" class="text-xs opacity-70"></span></div>
+            <div class="pt-2 flex items-center gap-2">
+              <button id="refresh-status" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-sm">Cek Status</button>
+            </div>
+            <div class="text-xs opacity-70">Status otomatis dicek setiap 7 detik. Webhook dari backend lebih akurat.</div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <footer class="max-w-6xl mx-auto p-6 opacity-70 text-sm">
+    <div>© <span id="year"></span> Vinzz Store Template · Avola API.</div>
   </footer>
 
   <script>
-    // Order via WhatsApp
-    document.querySelectorAll(".wa-order").forEach(btn => {
-      btn.addEventListener("click", e => {
-        e.preventDefault();
-        const p = btn.getAttribute("data-produk");
-        const h = btn.getAttribute("data-harga");
-        const t = new Date().toLocaleDateString("id-ID");
-        window.open(`https://wa.me/6283840390064?text=${encodeURIComponent(`[ *DETAIL PESANAN* ]\n\n• PRODUK : ${p}\n• HARGA : ${h}\n• TANGGAL : ${t}\n\n[ *SELAMAT BERBELANJA* ]`)}`, "_blank");
-      });
-    });
+    // ===== Util =====
+    const $$ = (sel, el=document) => el.querySelector(sel);
+    const $all = (sel, el=document) => [...el.querySelectorAll(sel)];
+    const rupiah = n => new Intl.NumberFormat('id-ID', { style:'currency', currency:'IDR' }).format(n);
+    const sleep = ms => new Promise(r=>setTimeout(r, ms));
 
-    // Navigasi box
-    document.querySelectorAll('.btn').forEach(btn => {
-      btn.addEventListener('click', e => {
-        const id = btn.getAttribute('href');
-        if (id && id.startsWith("#")) {
-          e.preventDefault();
-          document.querySelectorAll('.box').forEach(x => x.classList.remove('show'));
-          const tar = document.querySelector(id);
-          if (tar) tar.classList.add('show');
+    // ===== Theme & Mode =====
+    $$('#toggle-dark').addEventListener('click',()=>{
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark':'light');
+    });
+    (function initTheme(){
+      const t = localStorage.getItem('theme');
+      if(t==='dark') document.documentElement.classList.add('dark');
+    })();
+    const modeSel = $$('#mode');
+    const modeLabel = $$('#mode-label');
+    modeSel.onchange = ()=>{ modeLabel.textContent = modeSel.value==='live' ? 'Live' : 'Sandbox'; };
+
+    // ===== Produk Dummy =====
+    const PRODUCTS = [
+      { id: 'P1', name: 'DigitalOcean 10 Droplet VCC (DISKON)', price: 15000, desc: 'Ready, proses otomatis', stock: 99 },
+      { id: 'P2', name: 'Panel 10GB Unli', price: 30000, desc: 'Uptime tinggi, setup cepat', stock: 42 },
+      { id: 'P3', name: 'VPS 2GB', price: 85000, desc: 'Cocok untuk bot/mini app', stock: 12 },
+      { id: 'P4', name: 'Reseller Panel', price: 50000, desc: 'Akses reseller hemat', stock: 20 },
+      { id: 'P5', name: 'Owner Panel', price: 120000, desc: 'Full akses premium', stock: 7 },
+      { id: 'P6', name: 'Topup Saldo 50K', price: 50000, desc: 'Untuk transaksi di store', stock: 999 }
+    ];
+
+    // ===== Konfigurasi Backend Kamu =====
+    const CONFIG = {
+      BASE_API: '/api/avola',               // ganti sesuai backend kamu
+      EXPIRED_MINUTES: 15,                  // fallback untuk UI
+      POLL_INTERVAL: 7000,                  // 7 detik
+      CODEQR: 'QRIS-HD',                    // parameter codeqr opsional, tergantung implementasi backend
+    };
+
+    // Token disimpan sementara di memori (didapat dari backend)
+    let AVOLA_TOKEN = null;
+
+    // ===== Render Produk =====
+    function renderProducts(){
+      const wrap = $$('#products');
+      wrap.innerHTML = '';
+      PRODUCTS.forEach(p=>{
+        const card = document.createElement('div');
+        card.className = 'rounded-3xl border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900 shadow-sm hover:shadow-md transition-shadow';
+        card.innerHTML = `
+          <div class="flex items-start gap-3">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-500"></div>
+            <div class="flex-1">
+              <div class="font-semibold">${p.name}</div>
+              <div class="text-sm opacity-70">${p.desc}</div>
+              <div class="mt-1 font-semibold">${rupiah(p.price)}</div>
+              <div class="text-xs opacity-60">Stock: ${p.stock}</div>
+            </div>
+          </div>
+          <div class="mt-3 flex items-center justify-between">
+            <div class="inline-flex items-center gap-2 border rounded-2xl p-1">
+              <button data-act="dec" class="px-3 py-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">−</button>
+              <input type="number" value="0" min="0" class="w-12 text-center outline-none bg-transparent" />
+              <button data-act="inc" class="px-3 py-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">+</button>
+            </div>
+            <button data-act="buy" class="hidden buy-btn px-4 py-2 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-medium">Beli Sekarang</button>
+          </div>
+        `;
+        const input = $$('input', card);
+        const buyBtn = $$('.buy-btn', card);
+        card.addEventListener('click', (e)=>{
+          const t = e.target;
+          if(t.dataset.act==='inc'){ input.value = +input.value + 1; if(+input.value>0) buyBtn.classList.remove('hidden'); }
+          if(t.dataset.act==='dec'){ input.value = Math.max(0, +input.value - 1); if(+input.value===0) buyBtn.classList.add('hidden'); }
+          if(t.dataset.act==='buy'){
+            const qty = +input.value || 1;
+            openPayment({ product:p, qty });
+          }
+        });
+        wrap.appendChild(card);
+      });
+    }
+
+    // ===== History Lokal =====
+    function pushHistory(item){
+      const arr = JSON.parse(localStorage.getItem('history')||'[]');
+      arr.unshift(item);
+      localStorage.setItem('history', JSON.stringify(arr).slice(0, 5000));
+      renderHistory();
+    }
+    function renderHistory(){
+      const box = $$('#history');
+      const arr = JSON.parse(localStorage.getItem('history')||'[]');
+      if(!arr.length){ box.innerHTML = '<div class="text-xs opacity-60">Belum ada transaksi lokal.</div>'; return; }
+      box.innerHTML = arr.slice(0,7).map(h=>`
+        <div class="p-3 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <div class="text-sm">
+            <div class="font-medium">${h.invoice_id} — ${h.product} × ${h.qty}</div>
+            <div class="text-xs opacity-70">${new Date(h.time).toLocaleString('id-ID')} · ${h.status}</div>
+          </div>
+          <div class="text-sm font-semibold">${rupiah(h.amount)}</div>
+        </div>
+      `).join('');
+    }
+    $$('#clear-history').onclick = ()=>{ localStorage.removeItem('history'); renderHistory(); };
+
+    // ===== Modal =====
+    const modal = $$('#pay-modal');
+    function closeModal(){ modal.classList.add('hidden'); activePoll && clearInterval(activePoll); countdownTimer && clearInterval(countdownTimer); }
+    window.closeModal = closeModal;
+
+    let activePoll = null, countdownTimer = null;
+
+    async function ensureToken(){
+      if(!AVOLA_TOKEN){
+        const res = await fetch(`${CONFIG.BASE_API}/gettoken`);
+        if(!res.ok) throw new Error('Gagal ambil token');
+        const j = await res.json();
+        AVOLA_TOKEN = j.token || j.access_token || j.data?.token || null;
+        if(!AVOLA_TOKEN) throw new Error('Token kosong');
+      }
+      return AVOLA_TOKEN;
+    }
+
+    async function openPayment({product, qty}){
+      modal.classList.remove('hidden');
+      const amount = product.price * qty;
+      setModal({ invoice_id: '—', amount, status:'MENUNGGU', qr:null, pay_url:'#', expires_at:null });
+
+      const mode = modeSel.value;
+      const orderId = `INV-${Date.now()}`;
+      let invoice;
+
+      if(mode==='sandbox'){
+        invoice = await sandboxCreate({ order_id: orderId, amount });
+      } else {
+        try{
+          const token = await ensureToken();
+          const res = await fetch(`${CONFIG.BASE_API}/createpayment`,{
+            method:'POST',
+            headers:{ 'Content-Type':'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ amount, codeqr: CONFIG.CODEQR, order_id: orderId })
+          });
+          if(!res.ok){ throw new Error('Create payment gagal'); }
+          const j = await res.json();
+          invoice = {
+            success: j.success ?? true,
+            invoice_id: j.invoice_id ?? orderId,
+            amount,
+            qr: j.qr_image_url || j.qr || j.qr_link,
+            pay_url: j.pay_url || j.checkout_url || '#',
+            status: 'MENUNGGU',
+            expires_at: j.expires_at ?? null
+          };
+        }catch(e){ console.error(e); alert('Gagal membuat payment. Cek server.'); return; }
+      }
+
+      setModal(invoice);
+
+      // polling status
+      activePoll && clearInterval(activePoll);
+      activePoll = setInterval(()=> checkStatus(invoice.invoice_id, true), CONFIG.POLL_INTERVAL);
+
+      // countdown
+      countdownTimer && clearInterval(countdownTimer);
+      if(invoice.expires_at){ startCountdown(new Date(invoice.expires_at)); }
+
+      // history
+      pushHistory({ time: Date.now(), invoice_id: invoice.invoice_id, product: product.name, qty, amount, status: 'MENUNGGU' });
+
+      // manual refresh
+      $$('#refresh-status').onclick = ()=> checkStatus(invoice.invoice_id, false);
+    }
+
+    function setModal(data){
+      $$('#invoice-id').textContent = data.invoice_id;
+      $$('#invoice-amount').textContent = rupiah(data.amount||0);
+      setStatusBadge(data.status||'MENUNGGU');
+      $$('#pay-url').href = data.pay_url || '#';
+      $$('#modal-sub').textContent = 'Scan QR dengan e-wallet / m-banking kamu';
+      if(data.qr){ const img = $$('#qr-image'); img.src = data.qr; img.classList.remove('shimmer'); }
+      $$('#invoice-expired').textContent = data.expires_at ? new Date(data.expires_at).toLocaleString('id-ID') : '—';
+    }
+
+    function setStatusBadge(status){
+      const badge = $$('#invoice-status');
+      const st = (status==='PENDING'||status==='MENUNGGU')?'MENUNGGU':(status==='PAID'||status==='TERBAYAR'?'TERBAYAR':'EXPIRED');
+      badge.textContent = st;
+      badge.className = 'px-2 py-1 rounded-lg ' + (
+        st==='TERBAYAR' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
+        st==='EXPIRED' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
+        'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300'
+      );
+    }
+
+    function startCountdown(exp){
+      function tick(){
+        const s = Math.max(0, Math.floor((exp - new Date())/1000));
+        const m = Math.floor(s/60), ss = String(s%60).padStart(2,'0');
+        $$('#countdown').textContent = `· ${m}:${ss}`;
+        if(s<=0){ clearInterval(countdownTimer); setStatusBadge('EXPIRED'); }
+      }
+      tick();
+      countdownTimer = setInterval(tick, 1000);
+    }
+
+    // ===== Sandbox =====
+    async function sandboxCreate({ order_id, amount }){
+      const qrText = `AVOLA|${order_id}|${amount}`;
+      const qr = `https://chart.googleapis.com/chart?cht=qr&chs=400x400&chl=${encodeURIComponent(qrText)}`;
+      return { success:true, invoice_id:order_id, amount, qr, pay_url:'#', status:'MENUNGGU', expires_at: new Date(Date.now()+CONFIG.EXPIRED_MINUTES*60000).toISOString() };
+    }
+
+    async function checkStatus(invoice_id, silent){
+      const mode = modeSel.value;
+      try{
+        let status = 'PENDING', paid_at = null;
+        if(mode==='sandbox'){
+          if(Math.random()<0.3){ status='PAID'; paid_at=new Date().toISOString(); }
+          else if(Math.random()<0.05){ status='EXPIRED'; }
+          await sleep(350);
+        } else {
+          const token = await ensureToken();
+          const res = await fetch(`${CONFIG.BASE_API}/mutasiqr`,{ headers:{ 'Authorization': `Bearer ${token}` } });
+          if(!res.ok){ if(res.status===401){ AVOLA_TOKEN=null; } throw new Error('Mutasi gagal'); }
+          const j = await res.json();
+          // Backend kamu sebaiknya sudah memetakan hasil mutasi terbaru untuk invoice_id tsb.
+          status = (j.status||'PENDING').toUpperCase();
+          paid_at = j.paid_at || null;
         }
-      });
-    });
 
-    // Bintang animasi
-    const c = document.getElementById("starfield"), ctx = c.getContext("2d"), stars = [];
-    function rz() { c.width = innerWidth; c.height = innerHeight; }
-    window.addEventListener("resize", rz); rz();
-    for (let i = 0; i < 150; i++) {
-      stars.push({ x: Math.random() * c.width, y: Math.random() * c.height, r: Math.random() * 1.5 + 0.5, dx: (Math.random() - 0.5) * 0.5, dy: (Math.random() - 0.5) * 0.5 });
+        setStatusBadge(status==='PENDING'?'MENUNGGU':(status==='PAID'?'TERBAYAR':'EXPIRED'));
+
+        const arr = JSON.parse(localStorage.getItem('history')||'[]');
+        if(arr[0] && arr[0].invoice_id===invoice_id){ arr[0].status = (status==='PENDING')?'MENUNGGU':(status==='PAID'?'TERBAYAR':'EXPIRED'); localStorage.setItem('history', JSON.stringify(arr)); renderHistory(); }
+
+        if(status==='PAID'){ activePoll && clearInterval(activePoll); if(!silent) alert('Pembayaran diterima. Terima kasih!'); }
+      }catch(e){ console.error(e); if(!silent) alert('Gagal cek status.'); }
     }
-    function dr() {
-      ctx.clearRect(0, 0, c.width, c.height);
-      ctx.fillStyle = "white";
-      stars.forEach(s => {
-        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 2 * Math.PI); ctx.fill();
-        s.x += s.dx; s.y += s.dy;
-        if (s.x < 0 || s.x > c.width) s.dx *= -1;
-        if (s.y < 0 || s.y > c.height) s.dy *= -1;
-      });
-      requestAnimationFrame(dr);
-    }
-    dr();
+
+    // ===== Start =====
+    renderProducts();
+    renderHistory();
+    $$('#year').textContent = new Date().getFullYear();
   </script>
 </body>
-  </html>
-      
+</html>
