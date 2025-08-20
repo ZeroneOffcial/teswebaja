@@ -1,0 +1,51 @@
+body {
+  font-family: sans-serif;
+  background: #f7f7f7;
+  margin: 0;
+  color: #222;
+  transition: background 0.3s, color 0.3s;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  background: #008060;
+  color: white;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+.card {
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+.dark body {
+  background: #222;
+  color: white;
+}
+.dark .card {
+  background: #333;
+}
+.modal {
+  position: fixed;
+  top:0;left:0;width:100%;height:100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-content {
+  background:white;
+  padding:1rem;
+  border-radius:8px;
+  width:90%;
+  max-width:600px;
+}
+.hidden {display:none;}
+.dark .modal-content { background:#444; color:white; }

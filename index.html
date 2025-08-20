@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Koleksi Kode Bot</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div class="max-w-4xl mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-4 text-center">Koleksi Kode Bot</h1>
+    <div class="flex mb-4">
+      <input id="searchInput" type="text" placeholder="Cari kode..." class="flex-grow border p-2 rounded">
+      <button id="addBtn" onclick="openLogin()" class="ml-2 bg-green-500 text-white px-4 py-2 rounded hidden">+ Tambah Kode</button>
+    </div>
+    <div id="codeList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+  </div>
+
+  <!-- Modal Tambah Kode -->
+  <div id="addModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center">
+    <div class="bg-white p-4 rounded w-96">
+      <h2 class="text-xl font-bold mb-2">Tambah Kode Baru</h2>
+      <input id="titleInput" class="border p-2 mb-2 w-full" placeholder="Judul kode">
+      <input id="descInput" class="border p-2 mb-2 w-full" placeholder="Deskripsi kode">
+      <select id="langInput" class="border p-2 mb-2 w-full">
+        <option value="plaintext">Plain Text</option>
+        <option value="javascript">JavaScript</option>
+        <option value="python">Python</option>
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+        <option value="php">PHP</option>
+      </select>
+      <textarea id="codeInput" class="border p-2 mb-2 w-full h-40" placeholder="Tulis kode di sini"></textarea>
+      <div class="flex justify-end">
+        <button onclick="closeModal()" class="mr-2 bg-gray-300 px-3 py-1 rounded">Tutup</button>
+        <button id="saveCodeBtn" class="bg-green-500 text-white px-3 py-1 rounded">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Lihat Kode -->
+  <div id="viewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center">
+    <div class="bg-white p-4 rounded w-11/12 md:w-2/3 lg:w-1/2 max-h-[80vh] overflow-y-auto">
+      <h2 id="viewTitle" class="text-xl font-bold mb-1"></h2>
+      <p id="viewDesc" class="mb-2 text-gray-600"></p>
+      <pre><code id="viewCode" class="plaintext"></code></pre>
+      <div class="flex justify-end mt-3">
+        <button onclick="closeView()" class="bg-gray-300 px-3 py-1 rounded">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script src="script.js"></script>
+</body>
+</html>
