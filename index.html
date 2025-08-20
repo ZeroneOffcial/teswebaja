@@ -1,353 +1,122 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Vinzz Store — QRIS via Avola API (Template)</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <meta name="color-scheme" content="light dark">
-  <style>
-    .glass{backdrop-filter: blur(10px); background: color-mix(in oklab, white 72%, transparent)}
-    .dark .glass{background: color-mix(in oklab, #0b1220 60%, transparent)}
-    .shimmer{background: linear-gradient(100deg,rgba(255,255,255,0) 40%,rgba(255,255,255,.25) 50%,rgba(255,255,255,0) 60%) no-repeat; background-size:200% 100%; animation: shimmer 1.25s infinite}
-    @keyframes shimmer{to{background-position:-200% 0}}
-  </style>
-  <!--
-  =====================================================================
-  TEMPLATE FRONTEND HTML UNTUK QRIS via AVOLA API (orkut.avola.id)
-  =====================================================================
-  ⚠️ Penting:
-  - API Avola memerlukan OTP→TOKEN. JANGAN taruh username/password di frontend.
-  - Siapkan backend SEDERHANA (Node/PHP) yang mengekspos:
-      GET  /api/avola/gettoken              -> { token }
-      POST /api/avola/createpayment         -> { invoice_id, qr_image_url, pay_url?, expires_at? }
-      GET  /api/avola/mutasiqr              -> { status: 'PENDING'|'PAID'|'EXPIRED', paid_at? }
-    Backend ini yang memanggil endpoint asli orkut.avola.id dengan kredensialmu.
-  - File ini mendukung 2 mode: SANDBOX (simulasi) & LIVE (panggil backend kamu).
-  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Koleksi Kode Bot</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen">
-  <header class="sticky top-0 z-30 bg-white/80 dark:bg-slate-900/70 backdrop-blur border-b border-slate-200/50 dark:border-slate-800/60">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-500"></div>
-        <h1 class="text-lg font-semibold">Vinzz Store</h1>
-      </div>
-      <div class="flex items-center gap-2">
-        <button id="toggle-dark" class="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 text-sm">🌗 Tema</button>
-        <select id="mode" class="px-3 py-1.5 rounded-xl text-slate-900">
-          <option value="sandbox">Sandbox</option>
-          <option value="live">Live</option>
-        </select>
-      </div>
+<body class="bg-gray-100 min-h-screen">
+
+  <div class="max-w-5xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center mb-6">Koleksi Kode Bot</h1>
+
+    <!-- Tombol tambah kode -->
+    <div class="flex justify-between items-center mb-6">
+      <input id="search" type="text" placeholder="Cari kode..." 
+        class="w-2/3 p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <button onclick="showForm()" 
+        class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">+ Tambah Kode</button>
     </div>
-  </header>
 
-  <main class="max-w-6xl mx-auto p-4">
-    <section class="rounded-3xl p-6 mb-6 bg-gradient-to-br from-indigo-500 to-cyan-500 text-white shadow">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 class="text-2xl md:text-3xl font-bold">Checkout QRIS instan (Avola)</h2>
-          <p class="opacity-90 mt-1">Template satu file: produk + modal QR + auto cek mutasi.</p>
-        </div>
-        <div class="text-sm opacity-90">Mode transaksi: <span id="mode-label" class="font-semibold">Sandbox</span></div>
-      </div>
-    </section>
+    <!-- Container kode -->
+    <div id="code-list" class="grid grid-cols-1 gap-6"></div>
+  </div>
 
-    <section>
-      <h3 class="text-xl font-semibold mb-3">Produk</h3>
-      <div id="products" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-    </section>
-
-    <section class="mt-8">
-      <div class="flex items-center justify-between mb-2">
-        <h3 class="text-lg font-semibold">Riwayat Order (Local)</h3>
-        <button id="clear-history" class="text-sm underline">Bersihkan</button>
-      </div>
-      <div id="history" class="space-y-2"></div>
-    </section>
-  </main>
-
-  <!-- Modal Pembayaran -->
-  <div id="pay-modal" class="fixed inset-0 hidden items-center justify-center p-4">
-    <div class="absolute inset-0 bg-black/60" onclick="closeModal()"></div>
-    <div class="relative w-full max-w-lg rounded-3xl glass border border-white/20 dark:border-slate-800 shadow-xl">
-      <div class="p-5 flex items-start gap-3 border-b border-white/20 dark:border-slate-800">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-500"></div>
-        <div>
-          <div class="text-lg font-semibold">Bayar via QRIS</div>
-          <div id="modal-sub" class="text-xs opacity-70">Menyiapkan invoice…</div>
-        </div>
-        <button onclick="closeModal()" class="ml-auto px-2 py-1 rounded-lg hover:bg-white/10">✕</button>
-      </div>
-      <div class="p-5">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="flex flex-col items-center justify-center border rounded-2xl p-3">
-            <img id="qr-image" alt="QRIS" class="w-52 h-52 object-contain shimmer rounded-xl" />
-            <a id="pay-url" href="#" target="_blank" class="mt-2 text-xs underline">Buka halaman pembayaran</a>
-          </div>
-          <div class="space-y-3">
-            <div class="text-sm">Invoice ID: <span id="invoice-id" class="font-mono">—</span></div>
-            <div class="text-sm">Jumlah: <span id="invoice-amount" class="font-semibold">—</span></div>
-            <div class="text-sm">Status: <span id="invoice-status" class="px-2 py-1 rounded-lg bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300">MENUNGGU</span></div>
-            <div class="text-sm">Expired: <span id="invoice-expired">—</span> <span id="countdown" class="text-xs opacity-70"></span></div>
-            <div class="pt-2 flex items-center gap-2">
-              <button id="refresh-status" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-sm">Cek Status</button>
-            </div>
-            <div class="text-xs opacity-70">Status otomatis dicek setiap 7 detik. Webhook dari backend lebih akurat.</div>
-          </div>
-        </div>
+  <!-- Popup Form -->
+  <div id="popup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-lg shadow-lg">
+      <h2 class="text-xl font-bold mb-4">Tambah Kode Baru</h2>
+      <input id="title" type="text" placeholder="Judul kode" class="w-full mb-3 p-2 border rounded">
+      <input id="desc" type="text" placeholder="Deskripsi singkat" class="w-full mb-3 p-2 border rounded">
+      <textarea id="code" placeholder="Tempel kode di sini..." class="w-full h-40 p-2 border rounded font-mono"></textarea>
+      <div class="flex justify-end gap-3 mt-4">
+        <button onclick="hideForm()" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">Batal</button>
+        <button onclick="addCode()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Simpan</button>
       </div>
     </div>
   </div>
 
-  <footer class="max-w-6xl mx-auto p-6 opacity-70 text-sm">
-    <div>© <span id="year"></span> Vinzz Store Template · Avola API.</div>
-  </footer>
-
   <script>
-    // ===== Util =====
-    const $$ = (sel, el=document) => el.querySelector(sel);
-    const $all = (sel, el=document) => [...el.querySelectorAll(sel)];
-    const rupiah = n => new Intl.NumberFormat('id-ID', { style:'currency', currency:'IDR' }).format(n);
-    const sleep = ms => new Promise(r=>setTimeout(r, ms));
+    // Load data dari LocalStorage
+    let snippets = JSON.parse(localStorage.getItem('snippets') || '[]');
 
-    // ===== Theme & Mode =====
-    $$('#toggle-dark').addEventListener('click',()=>{
-      document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark':'light');
-    });
-    (function initTheme(){
-      const t = localStorage.getItem('theme');
-      if(t==='dark') document.documentElement.classList.add('dark');
-    })();
-    const modeSel = $$('#mode');
-    const modeLabel = $$('#mode-label');
-    modeSel.onchange = ()=>{ modeLabel.textContent = modeSel.value==='live' ? 'Live' : 'Sandbox'; };
-
-    // ===== Produk Dummy =====
-    const PRODUCTS = [
-      { id: 'P1', name: 'DigitalOcean 10 Droplet VCC (DISKON)', price: 15000, desc: 'Ready, proses otomatis', stock: 99 },
-      { id: 'P2', name: 'Panel 10GB Unli', price: 30000, desc: 'Uptime tinggi, setup cepat', stock: 42 },
-      { id: 'P3', name: 'VPS 2GB', price: 85000, desc: 'Cocok untuk bot/mini app', stock: 12 },
-      { id: 'P4', name: 'Reseller Panel', price: 50000, desc: 'Akses reseller hemat', stock: 20 },
-      { id: 'P5', name: 'Owner Panel', price: 120000, desc: 'Full akses premium', stock: 7 },
-      { id: 'P6', name: 'Topup Saldo 50K', price: 50000, desc: 'Untuk transaksi di store', stock: 999 }
-    ];
-
-    // ===== Konfigurasi Backend Kamu =====
-    const CONFIG = {
-      BASE_API: '/api/avola',               // ganti sesuai backend kamu
-      EXPIRED_MINUTES: 15,                  // fallback untuk UI
-      POLL_INTERVAL: 7000,                  // 7 detik
-      CODEQR: 'QRIS-HD',                    // parameter codeqr opsional, tergantung implementasi backend
-    };
-
-    // Token disimpan sementara di memori (didapat dari backend)
-    let AVOLA_TOKEN = null;
-
-    // ===== Render Produk =====
-    function renderProducts(){
-      const wrap = $$('#products');
-      wrap.innerHTML = '';
-      PRODUCTS.forEach(p=>{
-        const card = document.createElement('div');
-        card.className = 'rounded-3xl border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900 shadow-sm hover:shadow-md transition-shadow';
-        card.innerHTML = `
-          <div class="flex items-start gap-3">
-            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-500"></div>
-            <div class="flex-1">
-              <div class="font-semibold">${p.name}</div>
-              <div class="text-sm opacity-70">${p.desc}</div>
-              <div class="mt-1 font-semibold">${rupiah(p.price)}</div>
-              <div class="text-xs opacity-60">Stock: ${p.stock}</div>
+    function renderSnippets() {
+      const list = document.getElementById('code-list');
+      list.innerHTML = '';
+      snippets.forEach((s, i) => {
+        list.innerHTML += `
+          <div class="bg-white shadow-lg rounded-lg p-4 border border-gray-200 relative">
+            <div class="flex justify-between items-center mb-2">
+              <h2 class="text-xl font-semibold">${s.title}</h2>
+              <div class="flex gap-2">
+                <button onclick="copyCode(${i})" 
+                  class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Copy</button>
+                <button onclick="deleteCode(${i})" 
+                  class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Delete</button>
+              </div>
             </div>
-          </div>
-          <div class="mt-3 flex items-center justify-between">
-            <div class="inline-flex items-center gap-2 border rounded-2xl p-1">
-              <button data-act="dec" class="px-3 py-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">−</button>
-              <input type="number" value="0" min="0" class="w-12 text-center outline-none bg-transparent" />
-              <button data-act="inc" class="px-3 py-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">+</button>
-            </div>
-            <button data-act="buy" class="hidden buy-btn px-4 py-2 rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-medium">Beli Sekarang</button>
-          </div>
-        `;
-        const input = $$('input', card);
-        const buyBtn = $$('.buy-btn', card);
-        card.addEventListener('click', (e)=>{
-          const t = e.target;
-          if(t.dataset.act==='inc'){ input.value = +input.value + 1; if(+input.value>0) buyBtn.classList.remove('hidden'); }
-          if(t.dataset.act==='dec'){ input.value = Math.max(0, +input.value - 1); if(+input.value===0) buyBtn.classList.add('hidden'); }
-          if(t.dataset.act==='buy'){
-            const qty = +input.value || 1;
-            openPayment({ product:p, qty });
-          }
-        });
-        wrap.appendChild(card);
+            <p class="text-gray-600 mb-3">${s.desc}</p>
+            <pre class="language-javascript rounded"><code id="code${i}">${s.code.replace(/</g,"&lt;")}</code></pre>
+          </div>`;
+      });
+      Prism.highlightAll(); // Refresh highlight
+    }
+
+    function copyCode(i) {
+      navigator.clipboard.writeText(snippets[i].code).then(() => {
+        alert("Kode berhasil disalin!");
       });
     }
 
-    // ===== History Lokal =====
-    function pushHistory(item){
-      const arr = JSON.parse(localStorage.getItem('history')||'[]');
-      arr.unshift(item);
-      localStorage.setItem('history', JSON.stringify(arr).slice(0, 5000));
-      renderHistory();
-    }
-    function renderHistory(){
-      const box = $$('#history');
-      const arr = JSON.parse(localStorage.getItem('history')||'[]');
-      if(!arr.length){ box.innerHTML = '<div class="text-xs opacity-60">Belum ada transaksi lokal.</div>'; return; }
-      box.innerHTML = arr.slice(0,7).map(h=>`
-        <div class="p-3 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
-          <div class="text-sm">
-            <div class="font-medium">${h.invoice_id} — ${h.product} × ${h.qty}</div>
-            <div class="text-xs opacity-70">${new Date(h.time).toLocaleString('id-ID')} · ${h.status}</div>
-          </div>
-          <div class="text-sm font-semibold">${rupiah(h.amount)}</div>
-        </div>
-      `).join('');
-    }
-    $$('#clear-history').onclick = ()=>{ localStorage.removeItem('history'); renderHistory(); };
-
-    // ===== Modal =====
-    const modal = $$('#pay-modal');
-    function closeModal(){ modal.classList.add('hidden'); activePoll && clearInterval(activePoll); countdownTimer && clearInterval(countdownTimer); }
-    window.closeModal = closeModal;
-
-    let activePoll = null, countdownTimer = null;
-
-    async function ensureToken(){
-      if(!AVOLA_TOKEN){
-        const res = await fetch(`${CONFIG.BASE_API}/gettoken`);
-        if(!res.ok) throw new Error('Gagal ambil token');
-        const j = await res.json();
-        AVOLA_TOKEN = j.token || j.access_token || j.data?.token || null;
-        if(!AVOLA_TOKEN) throw new Error('Token kosong');
+    function deleteCode(i) {
+      if (confirm("Yakin mau hapus snippet ini?")) {
+        snippets.splice(i, 1);
+        localStorage.setItem('snippets', JSON.stringify(snippets));
+        renderSnippets();
       }
-      return AVOLA_TOKEN;
     }
 
-    async function openPayment({product, qty}){
-      modal.classList.remove('hidden');
-      const amount = product.price * qty;
-      setModal({ invoice_id: '—', amount, status:'MENUNGGU', qr:null, pay_url:'#', expires_at:null });
+    function showForm() {
+      document.getElementById('popup').classList.remove('hidden');
+    }
 
-      const mode = modeSel.value;
-      const orderId = `INV-${Date.now()}`;
-      let invoice;
+    function hideForm() {
+      document.getElementById('popup').classList.add('hidden');
+      document.getElementById('title').value = '';
+      document.getElementById('desc').value = '';
+      document.getElementById('code').value = '';
+    }
 
-      if(mode==='sandbox'){
-        invoice = await sandboxCreate({ order_id: orderId, amount });
-      } else {
-        try{
-          const token = await ensureToken();
-          const res = await fetch(`${CONFIG.BASE_API}/createpayment`,{
-            method:'POST',
-            headers:{ 'Content-Type':'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ amount, codeqr: CONFIG.CODEQR, order_id: orderId })
-          });
-          if(!res.ok){ throw new Error('Create payment gagal'); }
-          const j = await res.json();
-          invoice = {
-            success: j.success ?? true,
-            invoice_id: j.invoice_id ?? orderId,
-            amount,
-            qr: j.qr_image_url || j.qr || j.qr_link,
-            pay_url: j.pay_url || j.checkout_url || '#',
-            status: 'MENUNGGU',
-            expires_at: j.expires_at ?? null
-          };
-        }catch(e){ console.error(e); alert('Gagal membuat payment. Cek server.'); return; }
+    function addCode() {
+      const title = document.getElementById('title').value.trim();
+      const desc = document.getElementById('desc').value.trim();
+      const code = document.getElementById('code').value;
+      if(!title || !desc || !code) {
+        alert("Lengkapi semua field!");
+        return;
       }
-
-      setModal(invoice);
-
-      // polling status
-      activePoll && clearInterval(activePoll);
-      activePoll = setInterval(()=> checkStatus(invoice.invoice_id, true), CONFIG.POLL_INTERVAL);
-
-      // countdown
-      countdownTimer && clearInterval(countdownTimer);
-      if(invoice.expires_at){ startCountdown(new Date(invoice.expires_at)); }
-
-      // history
-      pushHistory({ time: Date.now(), invoice_id: invoice.invoice_id, product: product.name, qty, amount, status: 'MENUNGGU' });
-
-      // manual refresh
-      $$('#refresh-status').onclick = ()=> checkStatus(invoice.invoice_id, false);
+      snippets.push({title, desc, code});
+      localStorage.setItem('snippets', JSON.stringify(snippets));
+      hideForm();
+      renderSnippets();
     }
 
-    function setModal(data){
-      $$('#invoice-id').textContent = data.invoice_id;
-      $$('#invoice-amount').textContent = rupiah(data.amount||0);
-      setStatusBadge(data.status||'MENUNGGU');
-      $$('#pay-url').href = data.pay_url || '#';
-      $$('#modal-sub').textContent = 'Scan QR dengan e-wallet / m-banking kamu';
-      if(data.qr){ const img = $$('#qr-image'); img.src = data.qr; img.classList.remove('shimmer'); }
-      $$('#invoice-expired').textContent = data.expires_at ? new Date(data.expires_at).toLocaleString('id-ID') : '—';
-    }
+    document.getElementById('search').addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      document.querySelectorAll('#code-list > div').forEach(card => {
+        const title = card.querySelector('h2').textContent.toLowerCase();
+        const desc = card.querySelector('p').textContent.toLowerCase();
+        card.style.display = (title.includes(query) || desc.includes(query)) ? '' : 'none';
+      });
+    });
 
-    function setStatusBadge(status){
-      const badge = $$('#invoice-status');
-      const st = (status==='PENDING'||status==='MENUNGGU')?'MENUNGGU':(status==='PAID'||status==='TERBAYAR'?'TERBAYAR':'EXPIRED');
-      badge.textContent = st;
-      badge.className = 'px-2 py-1 rounded-lg ' + (
-        st==='TERBAYAR' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-        st==='EXPIRED' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
-        'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300'
-      );
-    }
-
-    function startCountdown(exp){
-      function tick(){
-        const s = Math.max(0, Math.floor((exp - new Date())/1000));
-        const m = Math.floor(s/60), ss = String(s%60).padStart(2,'0');
-        $$('#countdown').textContent = `· ${m}:${ss}`;
-        if(s<=0){ clearInterval(countdownTimer); setStatusBadge('EXPIRED'); }
-      }
-      tick();
-      countdownTimer = setInterval(tick, 1000);
-    }
-
-    // ===== Sandbox =====
-    async function sandboxCreate({ order_id, amount }){
-      const qrText = `AVOLA|${order_id}|${amount}`;
-      const qr = `https://chart.googleapis.com/chart?cht=qr&chs=400x400&chl=${encodeURIComponent(qrText)}`;
-      return { success:true, invoice_id:order_id, amount, qr, pay_url:'#', status:'MENUNGGU', expires_at: new Date(Date.now()+CONFIG.EXPIRED_MINUTES*60000).toISOString() };
-    }
-
-    async function checkStatus(invoice_id, silent){
-      const mode = modeSel.value;
-      try{
-        let status = 'PENDING', paid_at = null;
-        if(mode==='sandbox'){
-          if(Math.random()<0.3){ status='PAID'; paid_at=new Date().toISOString(); }
-          else if(Math.random()<0.05){ status='EXPIRED'; }
-          await sleep(350);
-        } else {
-          const token = await ensureToken();
-          const res = await fetch(`${CONFIG.BASE_API}/mutasiqr`,{ headers:{ 'Authorization': `Bearer ${token}` } });
-          if(!res.ok){ if(res.status===401){ AVOLA_TOKEN=null; } throw new Error('Mutasi gagal'); }
-          const j = await res.json();
-          // Backend kamu sebaiknya sudah memetakan hasil mutasi terbaru untuk invoice_id tsb.
-          status = (j.status||'PENDING').toUpperCase();
-          paid_at = j.paid_at || null;
-        }
-
-        setStatusBadge(status==='PENDING'?'MENUNGGU':(status==='PAID'?'TERBAYAR':'EXPIRED'));
-
-        const arr = JSON.parse(localStorage.getItem('history')||'[]');
-        if(arr[0] && arr[0].invoice_id===invoice_id){ arr[0].status = (status==='PENDING')?'MENUNGGU':(status==='PAID'?'TERBAYAR':'EXPIRED'); localStorage.setItem('history', JSON.stringify(arr)); renderHistory(); }
-
-        if(status==='PAID'){ activePoll && clearInterval(activePoll); if(!silent) alert('Pembayaran diterima. Terima kasih!'); }
-      }catch(e){ console.error(e); if(!silent) alert('Gagal cek status.'); }
-    }
-
-    // ===== Start =====
-    renderProducts();
-    renderHistory();
-    $$('#year').textContent = new Date().getFullYear();
+    // Render saat halaman dibuka
+    renderSnippets();
   </script>
+
 </body>
 </html>
