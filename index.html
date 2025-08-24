@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🚀 Auto Installer Pterodactyl</title>
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0f172a, #1e293b, #0d9488);
+      color: white;
+      flex-direction: column;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, #22c55e, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 2s infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #22c55e; }
+      to { text-shadow: 0 0 20px #06b6d4; }
+    }
+    form {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      background: #1e293b;
+      color: white;
+      font-size: 0.95rem;
+      transition: 0.3s;
+    }
+    input:focus {
+      background: #334155;
+      box-shadow: 0 0 0 2px #22c55e;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #22c55e, #06b6d4);
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    button:hover {
+      transform: scale(1.05);
+    }
+    pre {
+      margin-top: 25px;
+      width: 100%;
+      max-width: 600px;
+      height: 300px;
+      overflow-y: auto;
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 12px;
+      text-align: left;
+      font-size: 0.9rem;
+      line-height: 1.4rem;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.6);
+    }
+  </style>
+</head>
+<body>
+  <h1>🚀 Auto Installer Pterodactyl</h1>
+  <form id="installForm">
+    <input type="text" name="ip" placeholder="IP VPS" required>
+    <input type="text" name="user" placeholder="Username (default root)">
+    <input type="password" name="password" placeholder="Password VPS" required>
+    <input type="text" name="panel" placeholder="Domain Panel" required>
+    <input type="text" name="node" placeholder="Domain Node" required>
+    <input type="text" name="ram" placeholder="RAM Server (MB)" required>
+    <input type="text" name="userpanel" placeholder="Username Panel" required>
+    <input type="email" name="email" placeholder="Email Panel" required>
+    <button type="submit">Install Panel</button>
+  </form>
+
+  <pre id="output"></pre>
+
+  <script>
+    document.getElementById('installForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      let data = Object.fromEntries(new FormData(e.target).entries());
+      document.getElementById('output').textContent = "🚀 Instalasi dimulai...\n";
+
+      let res = await fetch('/install', {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      let reader = res.body.getReader();
+      let decoder = new TextDecoder("utf-8");
+      while(true) {
+        let { done, value } = await reader.read();
+        if (done) break;
+        document.getElementById('output').textContent += decoder.decode(value);
+      }
+    });
+  </script>
+</body>
+</html>
