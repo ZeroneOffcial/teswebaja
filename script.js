@@ -1,84 +1,97 @@
-let isOwner = false;
+import express from "express";
+import { Client } from "ssh2";
 
-function openLogin() {
-  const pwd = prompt("Masukkan password admin:");
-  if (pwd === "zerone") {   // ganti sesuai keinginan
-    isOwner = true;
-    document.getElementById('addBtn').onclick = openModal;
-    openModal();
-  } else {
-    alert("Password salah!");
-  }
-}
+const app = express();
+app.use(express.json());
 
-function openModal() {
-  document.getElementById('addModal').classList.remove('hidden');
-  document.getElementById('addModal').classList.add('flex');
-}
+app.post("/install", async (req, res) => {
+  const { ip, user = "root", password, panel, node, ram, userpanel, email } = req.body;
+  const conn = new Client();
 
-function closeModal() {
-  document.getElementById('addModal').classList.add('hidden');
-  document.getElementById('addModal').classList.remove('flex');
-}
+  res.write("🔌 Connecting ke VPS...\n");
 
-function closeView() {
-  document.getElementById('viewModal').classList.add('hidden');
-  document.getElementById('viewModal').classList.remove('flex');
-}
+  conn.on("ready", () => {
+    res.write("✅ Connected! Mulai instalasi Panel...\n");
 
-document.getElementById('saveCodeBtn').onclick = async () => {
-  const title = document.getElementById('titleInput').value;
-  const desc = document.getElementById('descInput').value;
-  const code = document.getElementById('codeInput').value;
-  const lang = document.getElementById('langInput').value;
+    const passwordPanel = "admin" + Math.random().toString(36).substring(2, 8);
+    const commandPanel = `bash <(curl -s https://pterodactyl-installer.se)`;
 
-  if (!title || !code) { alert("Lengkapi judul dan kode!"); return; }
+    // STEP 1: Install Panel
+    conn.exec(commandPanel, (err, stream) => {
+      if (err) {
+        res.write("❌ Error: " + err.message);
+        return res.end();
+      }
 
-  await fetch('addcode.php', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({title,desc,code,lang})
-  });
+      stream.on("close", () => {
+        res.write("\n✅ Panel terinstall! Sekarang instalasi Wings...\n");
 
-  alert("Kode disimpan!");
-  closeModal();
-  loadCodes();
-};
+        // STEP 2: Install Wings
+        conn.exec(`bash <(curl -s https://raw.githubusercontent.com/SkyzoOffc/Pterodactyl-Theme-Autoinstaller/main/createnode.sh)`, (err, wingsStream) => {
+          if (err) {
+            res.write("❌ Error instal wings: " + err.message);
+            return res.end();
+          }
 
-async function loadCodes() {
-  const res = await fetch('getcodes.php');
-  const codes = await res.json();
-  const list = document.getElementById('codeList');
-  list.innerHTML = '';
+          wingsStream.on("close", () => {
+            res.write("\n🎉 Instalasi selesai!\n");
+            res.write(`
+📦 Detail Akun Panel:
+- 🌐 Domain: ${panel}
+- 👤 Username: ${userpanel}
+- 🔑 Password: ${passwordPanel}
+- 📧 Email: ${email}
 
-  codes.forEach(c => {
-    const div = document.createElement('div');
-    div.className = 'bg-white p-3 rounded shadow cursor-pointer hover:bg-gray-50';
-    div.innerHTML = `<h3 class="font-bold">${c.title}</h3><p class="text-sm text-gray-600">${c.desc}</p>`;
-    div.onclick = () => viewCode(c);
-    list.appendChild(div);
-  });
-}
+⚡ Wings sudah dibuat di domain: ${node}
+RAM Dialokasikan: ${ram} MB
 
-function viewCode(c){
-  document.getElementById('viewTitle').innerText = c.title;
-  document.getElementById('viewDesc').innerText = c.desc;
+👉 Silakan login ke panel lalu buat Allocation & Token Wings.
+            `);
+            res.end();
+          });
 
-  const codeEl = document.getElementById('viewCode');
-  codeEl.className = c.lang;
-  codeEl.textContent = c.code;
+          wingsStream.on("data", (data) => {
+            const output = data.toString();
+            res.write(output);
 
-  document.getElementById('viewModal').classList.remove('hidden');
-  document.getElementById('viewModal').classList.add('flex');
-  hljs.highlightElement(codeEl);
-}
+            if (output.includes("Masukkan nama lokasi:")) wingsStream.write("Singapore\n");
+            if (output.includes("Masukkan deskripsi lokasi:")) wingsStream.write("Node by Installer\n");
+            if (output.includes("Masukkan domain:")) wingsStream.write(`${node}\n`);
+            if (output.includes("Masukkan nama node:")) wingsStream.write("NodeAuto\n");
+            if (output.includes("Masukkan RAM")) wingsStream.write(`${ram}\n`);
+            if (output.includes("jumlah maksimum disk")) wingsStream.write(`${ram}\n`);
+            if (output.includes("Masukkan Locid:")) wingsStream.write("1\n");
+          });
 
-document.getElementById('searchInput').addEventListener('input', e => {
-  const val = e.target.value.toLowerCase();
-  document.querySelectorAll('#codeList > div').forEach(div => {
-    div.style.display = div.innerText.toLowerCase().includes(val) ? 'block' : 'none';
-  });
+          wingsStream.stderr.on("data", (data) => res.write("ERR-WINGS: " + data.toString()));
+        });
+      });
+
+      stream.on("data", (data) => {
+        const output = data.toString();
+        res.write(output);
+
+        // Auto jawab prompt installer Panel
+        if (output.includes("Input 0-6")) stream.write("0\n");
+        if (output.includes("(y/N)")) stream.write("y\n");
+        if (output.includes("Database username")) stream.write(`${userpanel}\n`);
+        if (output.includes("Password (press enter")) stream.write(`${passwordPanel}\n`);
+        if (output.includes("Select timezone")) stream.write("Asia/Jakarta\n");
+        if (output.includes("Email address for the initial admin account")) stream.write(`${email}\n`);
+        if (output.includes("Username for the initial admin account")) stream.write(`${userpanel}\n`);
+        if (output.includes("First name")) stream.write(`${userpanel}\n`);
+        if (output.includes("Last name")) stream.write(`${userpanel}\n`);
+        if (output.includes("Password for the initial admin account")) stream.write(`${passwordPanel}\n`);
+        if (output.includes("Set the FQDN of this panel")) stream.write(`${panel}\n`);
+        if (output.includes("Do you want to automatically configure UFW")) stream.write("y\n");
+        if (output.includes("Do you want to automatically configure HTTPS")) stream.write("y\n");
+        if (output.includes("I agree")) stream.write("y\n");
+        if (output.includes("(A)gree/(C)ancel")) stream.write("A\n");
+      });
+
+      stream.stderr.on("data", (data) => res.write("ERR-PANEL: " + data.toString()));
+    });
+  }).connect({ host: ip, port: 22, username: user, password });
 });
 
-window.onload = () => {
-  loadCodes
+app.listen(3000, () => console.log("Server jalan di http://localhost:3000"));
