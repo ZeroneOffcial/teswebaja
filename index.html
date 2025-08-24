@@ -1,170 +1,52 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Koleksi Kode Bot</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.css" rel="stylesheet">
+  <title>Auto Install Pterodactyl</title>
   <style>
-    .code-card {
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .code-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    .slide-down {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.4s ease;
-    }
-    .slide-down.open {
-      max-height: 1000px;
-    }
+    body { font-family: Arial; background: #0f172a; color: white; text-align: center; }
+    form { margin: 50px auto; width: 300px; display: flex; flex-direction: column; gap: 10px; }
+    input, button { padding: 10px; border-radius: 8px; border: none; }
+    button { background: #22c55e; color: white; font-weight: bold; cursor: pointer; }
+    pre { text-align: left; background: black; padding: 10px; border-radius: 8px; margin-top: 20px; height: 300px; overflow-y: scroll; }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-  <div class="max-w-6xl mx-auto p-6">
-    <h1 class="text-3xl font-bold text-center mb-6">Koleksi Kode Bot</h1>
+<body>
+  <h1>🚀 Auto Installer Pterodactyl</h1>
+  <form id="installForm">
+    <input type="text" name="ip" placeholder="IP VPS" required>
+    <input type="text" name="user" placeholder="Username (default root)">
+    <input type="password" name="password" placeholder="Password VPS" required>
+    <input type="text" name="panel" placeholder="Domain Panel" required>
+    <input type="text" name="node" placeholder="Domain Node" required>
+    <input type="text" name="ram" placeholder="RAM Server (MB)" required>
+    <input type="text" name="userpanel" placeholder="Username Panel" required>
+    <input type="email" name="email" placeholder="Email Panel" required>
+    <button type="submit">Install Panel</button>
+  </form>
 
-    <!-- Input Password -->
-    <div id="password-section" class="mb-4 text-center">
-      <input id="password-input" type="password" placeholder="Masukkan password..." 
-             class="border p-2 rounded w-64">
-      <button onclick="checkPassword()" 
-              class="bg-blue-500 text-white px-4 py-2 rounded ml-2">
-        Masuk
-      </button>
-    </div>
+  <pre id="output"></pre>
 
-    <!-- Tombol Tambah Kode (hanya untuk owner) -->
-    <div id="add-section" class="hidden mb-4 text-center">
-      <button onclick="showAddModal()" 
-              class="bg-green-500 text-white px-4 py-2 rounded">
-        + Tambah Kode
-      </button>
-    </div>
-
-    <!-- Cari Kode -->
-    <input id="search-input" type="text" placeholder="Cari kode..." 
-           class="border p-2 rounded w-full mb-6">
-
-    <!-- Grid Kode -->
-    <div id="code-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-  </div>
-
-  <!-- Modal Tambah Kode -->
-  <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white p-4 rounded shadow max-w-lg w-full">
-      <h2 class="text-xl font-bold mb-2">Tambah Kode</h2>
-      <input id="title-input" type="text" placeholder="Judul kode..." class="border p-2 rounded w-full mb-2">
-      <textarea id="desc-input" placeholder="Deskripsi..." class="border p-2 rounded w-full mb-2"></textarea>
-      <textarea id="code-input" placeholder="Tulis kodenya di sini..." class="border p-2 rounded w-full h-40 mb-2"></textarea>
-      <div class="flex justify-end space-x-2">
-        <button onclick="hideAddModal()" class="bg-gray-400 text-white px-3 py-1 rounded">Batal</button>
-        <button onclick="addCode()" class="bg-green-500 text-white px-3 py-1 rounded">Simpan</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.js"></script>
   <script>
-    const PASSWORD = "rahasia123"; // ganti sesuai keinginanmu
-    let codes = JSON.parse(localStorage.getItem("codes") || "[]");
-    let isOwner = false;
+    document.getElementById('installForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      let data = Object.fromEntries(new FormData(e.target).entries());
+      document.getElementById('output').textContent = "🚀 Instalasi dimulai...\n";
 
-    function checkPassword() {
-      const input = document.getElementById("password-input").value;
-      if (input === PASSWORD) {
-        isOwner = true;
-        document.getElementById("add-section").classList.remove("hidden");
-        document.getElementById("password-section").classList.add("hidden");
-        renderCodes();
-      } else {
-        alert("Password salah!");
+      let res = await fetch('/install', {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      let reader = res.body.getReader();
+      let decoder = new TextDecoder("utf-8");
+      while(true) {
+        let { done, value } = await reader.read();
+        if (done) break;
+        document.getElementById('output').textContent += decoder.decode(value);
       }
-    }
-
-    function showAddModal() {
-      document.getElementById("modal").classList.remove("hidden");
-    }
-    function hideAddModal() {
-      document.getElementById("modal").classList.add("hidden");
-    }
-
-    function addCode() {
-      const title = document.getElementById("title-input").value;
-      const desc = document.getElementById("desc-input").value;
-      const code = document.getElementById("code-input").value;
-      if (title && code) {
-        codes.push({ title, desc, code });
-        localStorage.setItem("codes", JSON.stringify(codes));
-        renderCodes();
-        hideAddModal();
-        document.getElementById("title-input").value = "";
-        document.getElementById("desc-input").value = "";
-        document.getElementById("code-input").value = "";
-      } else {
-        alert("Judul dan kode wajib diisi!");
-      }
-    }
-
-    function deleteCode(i) {
-      if (confirm("Hapus kode ini?")) {
-        codes.splice(i, 1);
-        localStorage.setItem("codes", JSON.stringify(codes));
-        renderCodes();
-      }
-    }
-
-    function copyCode(i) {
-      navigator.clipboard.writeText(codes[i].code)
-        .then(() => alert("Kode berhasil disalin!"))
-        .catch(() => alert("Gagal menyalin kode."));
-    }
-
-    function renderCodes() {
-      const list = document.getElementById("code-list");
-      const search = document.getElementById("search-input").value.toLowerCase();
-      list.innerHTML = "";
-      codes
-        .filter(c => c.title.toLowerCase().includes(search))
-        .forEach((c, i) => {
-          const card = document.createElement("div");
-          card.className = "code-card bg-white p-4 rounded shadow flex flex-col";
-
-          let html = `
-            <div class="cursor-pointer flex-1" onclick="toggleCode(${i})">
-              <h3 class="font-bold text-lg">${c.title}</h3>
-              <p class="text-sm text-gray-600">${c.desc || ""}</p>
-            </div>
-            <div id="code-${i}" class="slide-down mt-2">
-              <pre class="bg-gray-900 text-white p-3 rounded overflow-auto">
-<code class="language-javascript">${Prism.highlight(c.code, Prism.languages.javascript, 'javascript')}</code>
-              </pre>
-            </div>
-          `;
-          if (isOwner) {
-            html += `
-              <div class="flex justify-end space-x-2 mt-2">
-                <button onclick="copyCode(${i})" class="bg-blue-500 text-white px-2 py-1 rounded">Copy</button>
-                <button onclick="deleteCode(${i})" class="bg-red-500 text-white px-2 py-1 rounded">Delete</button>
-              </div>
-            `;
-          }
-          card.innerHTML = html;
-          list.appendChild(card);
-        });
-    }
-
-    function toggleCode(i) {
-      const el = document.getElementById("code-" + i);
-      if (el) el.classList.toggle("open");
-    }
-
-    document.getElementById("search-input").addEventListener("input", renderCodes);
-    renderCodes();
+    });
   </script>
 </body>
 </html>
